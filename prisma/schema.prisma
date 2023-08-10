@@ -92,7 +92,6 @@ model User {
 
   messagesRead    Message[]    @relation("readMessages")
   messagesDeleted Message[]    @relation("deletedMessage")
-  chatInvites     ChatInvite[]
 
   accounts Account[]
   sessions Session[]
@@ -133,7 +132,6 @@ model Chat {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   messages    Message[]
-  chatInvites ChatInvite[]
 
   @@index([ownerId])
 }
@@ -146,22 +144,6 @@ model EditedMessage {
   messageId String?
 
   @@index([messageId])
-}
-
-model ChatInvite {
-  id      String    @id @default(cuid())
-  code    String
-  expires DateTime?
-
-  owner User   @relation(fields: [ownerId], references: [id])
-  chat  Chat   @relation(fields: [chatId], references: [id])
-  post  Post[]
-
-  ownerId String
-  chatId  String
-
-  @@index([ownerId])
-  @@index([chatId])
 }
 
 model Message {
@@ -216,14 +198,12 @@ model Post {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  inviteId String?
   userId   String
 
   thread  Post[] @relation("Thread")
   replies Post[] @relation("Replies")
 
   author   User        @relation(fields: [userId], references: [id])
-  invite   ChatInvite? @relation(fields: [inviteId], references: [id])
   inThread Post[]      @relation("Thread")
 
   attachments File[]
@@ -235,7 +215,6 @@ model Post {
   repliedId Int?
 
   @@index([userId])
-  @@index([inviteId])
   @@index([repliedId])
 }
 
@@ -277,7 +256,7 @@ enum NotificationAction {
 
 model Preferences {
   id   String @id @default(cuid())
-  user User   @relation(fields: [userID], references: [id])
+  user User   @relation(fields: [userId], references: [id])
 
   theme                 Theme                @default(SYSTEM_DEFAULT)
   allowDMRequests       AnonymousPermissions @default(ALLOWED)
@@ -289,9 +268,9 @@ model Preferences {
   allowLikeNotifications   Boolean @default(true)
   allowDMNotifications     Boolean @default(true)
 
-  userID String @unique
+  userId String @unique
 
-  @@index([userID])
+  @@index([userId])
 }
 
 enum AnonymousPermissions {
