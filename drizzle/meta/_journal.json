@@ -1,0 +1,20 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1691630965648,
+      "tag": "0000_elite_lady_deathstrike",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1691632278135,
+      "tag": "0001_white_switch",
+      "breakpoints": true
+    }
+  ]
+}

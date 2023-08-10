@@ -1,0 +1,309 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  pushSubscription Json?
+  user             User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model User {
+  id          String       @id @default(cuid())
+  email       String       @unique
+  username    String       @unique
+  preferences Preferences?
+
+  createdAt     DateTime  @default(now())
+  birthdate     DateTime?
+  emailVerified DateTime?
+
+  avatar      String  @default("/user.png")
+  banner      String  @default("/banner.png")
+  biography   String  @default("")
+  displayName String?
+  name        String
+  tag         String
+
+  // decidi q vai ter só um link no perfil mas por motivos
+  // d compatibilidade vai continuar sendo uma array mas
+  // q smp vai ter só um valor deus q me perdoe
+  links        String[]
+  canReceiveDM AnonymousPermissions @default(ALLOWED)
+
+  pinnedPost   Post? @relation("PinnedPost", fields: [pinnedPostId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  pinnedPostId Int?
+
+  messages      Message[]
+  chats         Chat[]
+  fixedChats    Chat[]         @relation("FixedChat")
+  silencedChats Chat[]         @relation("SilencedChat")
+  ownedGroups   Chat[]         @relation("OwnedGroups")
+  posts         Post[]
+  notifications Notification[]
+
+  sentDMRequests DirectMessageRequest[] @relation("SentDMRequests")
+  dmRequests     DirectMessageRequest[] @relation("DMRequests")
+
+  likedPosts Post[] @relation("LikedBy")
+
+  following User[]               @relation("Friends")
+  followers User[]               @relation("Friends")
+  actions   NotificationActors[]
+
+  messagesRead    Message[]    @relation("readMessages")
+  messagesDeleted Message[]    @relation("deletedMessage")
+  chatInvites     ChatInvite[]
+
+  accounts Account[]
+  sessions Session[]
+
+  @@index([email])
+  @@index([pinnedPostId])
+}
+
+model DirectMessageRequest {
+  id         String @id @default(cuid())
+  origin     User   @relation("SentDMRequests", fields: [originId], references: [id])
+  originId   String
+  receiver   User   @relation("DMRequests", fields: [receiverId], references: [id])
+  receiverId String
+
+  @@index([originId])
+  @@index([receiverId])
+}
+
+enum ChatType {
+  DIRECT_MESSAGE
+  GROUP_CHAT
+}
+
+model Chat {
+  id          String   @id @default(cuid())
+  owner       User?    @relation("OwnedGroups", fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  ownerId     String?
+  name        String
+  description String
+  thumbnail   String   @default("/group.png")
+  type        ChatType
+  fixedBy     User[]   @relation("FixedChat")
+  silencedBy  User[]   @relation("SilencedChat")
+  verified    Boolean?
+
+  members     User[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  messages    Message[]
+  chatInvites ChatInvite[]
+
+  @@index([ownerId])
+}
+
+model EditedMessage {
+  id        String   @id @default(cuid())
+  content   String
+  files     File[]
+  message   Message? @relation(fields: [messageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  messageId String?
+
+  @@index([messageId])
+}
+
+model ChatInvite {
+  id      String    @id @default(cuid())
+  code    String
+  expires DateTime?
+
+  owner User   @relation(fields: [ownerId], references: [id])
+  chat  Chat   @relation(fields: [chatId], references: [id])
+  post  Post[]
+
+  ownerId String
+  chatId  String
+
+  @@index([ownerId])
+  @@index([chatId])
+}
+
+model Message {
+  id           String          @id @default(cuid())
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  content      String          @default("")
+  pastVersions EditedMessage[]
+  attachments  File[]
+  readBy       User[]          @relation("readMessages")
+  deletedBy    User[]          @relation("deletedMessage")
+  audio        String?
+  isDeleted    Boolean         @default(false)
+
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String
+  chat     Chat?  @relation(fields: [chatId], references: [id])
+  chatId   String
+
+  mentionedByMessages Message[] @relation("MentionedMessage")
+  mention             Message?  @relation("MentionedMessage", fields: [mentionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  mentionId           String?
+
+  @@index([id, authorId])
+  @@index([authorId])
+  @@index([chatId])
+  @@index([mentionId])
+}
+
+model File {
+  id   String @id @default(cuid())
+  name String
+  url  String
+  size Int
+
+  message         Message?       @relation(fields: [messageId], references: [id])
+  messageId       String?
+  post            Post?          @relation(fields: [postId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  postId          Int?
+  editedMessage   EditedMessage? @relation(fields: [editedMessageId], references: [id])
+  editedMessageId String?
+
+  @@index([messageId])
+  @@index([postId])
+  @@index([editedMessageId])
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  content   String
+  deleted   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  inviteId String?
+  userId   String
+
+  thread  Post[] @relation("Thread")
+  replies Post[] @relation("Replies")
+
+  author   User        @relation(fields: [userId], references: [id])
+  invite   ChatInvite? @relation(fields: [inviteId], references: [id])
+  inThread Post[]      @relation("Thread")
+
+  attachments File[]
+  pinnedBy    User[] @relation("PinnedPost")
+
+  likedBy User[] @relation("LikedBy")
+
+  replied   Post? @relation("Replies", fields: [repliedId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  repliedId Int?
+
+  @@index([userId])
+  @@index([inviteId])
+  @@index([repliedId])
+}
+
+model NotificationActors {
+  id    String @id @default(cuid())
+  users User[]
+
+  notification   Notification @relation(fields: [notificationId], references: [id])
+  notificationId String       @unique
+
+  @@index([notificationId])
+}
+
+model Notification {
+  id        String             @id @default(cuid())
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+  action    NotificationAction @default(GENERIC)
+
+  receiverId String
+  icon       String?
+  title      String
+  text       String
+  isRead     Boolean @default(false)
+  redirect   String
+
+  notificationReceiver User                @relation(fields: [receiverId], references: [id])
+  notificationActors   NotificationActors?
+
+  @@index([receiverId])
+}
+
+enum NotificationAction {
+  REPLY
+  LIKE
+  FOLLOW
+  GENERIC
+}
+
+model Preferences {
+  id   String @id @default(cuid())
+  user User   @relation(fields: [userID], references: [id])
+
+  theme                 Theme                @default(SYSTEM_DEFAULT)
+  allowDMRequests       AnonymousPermissions @default(ALLOWED)
+  allowSensitiveContent Boolean              @default(false)
+
+  allowPushNotifications   Boolean @default(false)
+  allowFollowNotifications Boolean @default(true)
+  allowReplyNotifications  Boolean @default(true)
+  allowLikeNotifications   Boolean @default(true)
+  allowDMNotifications     Boolean @default(true)
+
+  userID String @unique
+
+  @@index([userID])
+}
+
+enum AnonymousPermissions {
+  NOT_ALLOWED
+  FOLLOWING_ONLY
+  ALLOWED
+
+  @@map("DMRequests")
+}
+
+enum Theme {
+  LIGHT
+  DARK
+  SYSTEM_DEFAULT
+}
