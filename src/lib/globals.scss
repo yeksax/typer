@@ -12,7 +12,7 @@
 }
 
 * {
-  font-family: Source Code Pro;
+  font-family: Source Code Pro !important;
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -21,4 +21,35 @@
 html,
 body {
   height: 100%;
+  overflow-x: hidden;
+}
+
+.hover-effect {
+  position: relative;
+
+  &:hover {
+    &::after {
+      width: 32px;
+      opacity: 1;
+    }
+  }
+
+  &::after {
+    content: "";
+    transition: all 0.1s ease-in-out;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 0;
+    opacity: 0;
+    aspect-ratio: 1/1;
+    border-radius: 100%;
+    box-sizing: content-box;
+    backdrop-filter: invert(100%);
+  }
+}
+
+input, textarea{
+  background-color: transparent;
 }

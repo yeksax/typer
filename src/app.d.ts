@@ -2,8 +2,11 @@
 // for information about these interfaces
 declare global {
 	namespace App {
+		
 		// interface Error {}
-		// interface Locals {}
+		interface Locals {
+			pusher: import("pusher")
+		}
 		// interface PageData {}
 		// interface Platform {}
 	}

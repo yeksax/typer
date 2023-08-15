@@ -64,14 +64,11 @@ model User {
   name        String
   tag         String
 
-  // decidi q vai ter só um link no perfil mas por motivos
-  // d compatibilidade vai continuar sendo uma array mas
-  // q smp vai ter só um valor deus q me perdoe
   links        String[]
   canReceiveDM AnonymousPermissions @default(ALLOWED)
 
   pinnedPost   Post? @relation("PinnedPost", fields: [pinnedPostId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  pinnedPostId Int?
+  pinnedPostId String?
 
   messages      Message[]
   chats         Chat[]
@@ -90,8 +87,8 @@ model User {
   followers User[]               @relation("Friends")
   actions   NotificationActors[]
 
-  messagesRead    Message[]    @relation("readMessages")
-  messagesDeleted Message[]    @relation("deletedMessage")
+  messagesRead    Message[] @relation("readMessages")
+  messagesDeleted Message[] @relation("deletedMessage")
 
   accounts Account[]
   sessions Session[]
@@ -128,10 +125,10 @@ model Chat {
   silencedBy  User[]   @relation("SilencedChat")
   verified    Boolean?
 
-  members     User[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  messages    Message[]
+  members   User[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  messages  Message[]
 
   @@index([ownerId])
 }
@@ -139,7 +136,7 @@ model Chat {
 model EditedMessage {
   id        String   @id @default(cuid())
   content   String
-  files     File[]
+  files     Attachment[]
   message   Message? @relation(fields: [messageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   messageId String?
 
@@ -152,7 +149,7 @@ model Message {
   updatedAt    DateTime        @updatedAt
   content      String          @default("")
   pastVersions EditedMessage[]
-  attachments  File[]
+  attachments  Attachment[]
   readBy       User[]          @relation("readMessages")
   deletedBy    User[]          @relation("deletedMessage")
   audio        String?
@@ -173,7 +170,7 @@ model Message {
   @@index([mentionId])
 }
 
-model File {
+model Attachment {
   id   String @id @default(cuid())
   name String
   url  String
@@ -182,37 +179,41 @@ model File {
   message         Message?       @relation(fields: [messageId], references: [id])
   messageId       String?
   post            Post?          @relation(fields: [postId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  postId          Int?
+  postId          String?
   editedMessage   EditedMessage? @relation(fields: [editedMessageId], references: [id])
   editedMessageId String?
 
   @@index([messageId])
   @@index([postId])
   @@index([editedMessageId])
+	@@map("File")
 }
 
 model Post {
-  id        Int      @id @default(autoincrement())
+  id        String      @id @default(cuid())
   content   String
   deleted   Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
-
-  userId   String
+  author    User     @relation(fields: [userId], references: [id])
 
   thread  Post[] @relation("Thread")
   replies Post[] @relation("Replies")
+  reposts Post[] @relation("Reposts")
 
-  author   User        @relation(fields: [userId], references: [id])
-  inThread Post[]      @relation("Thread")
+  inThread Post[] @relation("Thread")
 
-  attachments File[]
+  attachments Attachment[]
   pinnedBy    User[] @relation("PinnedPost")
 
   likedBy User[] @relation("LikedBy")
 
-  replied   Post? @relation("Replies", fields: [repliedId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  repliedId Int?
+  repost Post? @relation("Reposts", fields: [repostId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replied  Post? @relation("Replies", fields: [repliedId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  userId    String
+  repostId  String?
+  repliedId String?
 
   @@index([userId])
   @@index([repliedId])

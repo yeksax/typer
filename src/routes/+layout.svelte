@@ -1,37 +1,52 @@
 <script lang="ts">
-	import { page } from "$app/stores";
-	import type { PageData } from "./$types";
-	import "$lib/globals.scss";
+  import { browser } from "$app/environment";
+  import { page } from "$app/stores";
+  import Navigation from "$lib/components/navigation/navigation.svelte";
+  import SidePanel from "$lib/components/side-panel/side-panel.svelte";
+  import "$lib/globals.scss";
+  import { pageTitle } from "$lib/utils/metadata";
+  import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
+  import type { PageData } from "./$types";
 
-	export let data: PageData;
+  export let data: PageData;
 
-	let theme = "";
+  let theme: "dark" | "" = "";
 
-	$: if (
-		(data.theme === "SYSTEM_DEFAULT" &&
-			window.matchMedia("(prefers-color-scheme: dark)").matches) ||
-		data.theme === "DARK"
-	) {
-		theme = "dark";
-	} else {
-		theme = "";
-	}
+  $: if (data.theme === "DARK") {
+    theme = "dark";
+  } else if (typeof window !== "undefined") {
+    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      theme = "dark";
+    }
+  } else {
+    theme = "";
+  }
+
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        enabled: browser,
+        refetchOnWindowFocus: false,
+      },
+    },
+  });
 </script>
 
 <svelte:head>
-	{#if $page.data.metadata}
-		{#if $page.data.metadata.title}
-			<title>{$page.data.metadata.title} | Typer</title>
-		{/if}
-	{:else}
-		<title>Typer</title>
-	{/if}
+  <title>
+    {pageTitle($page.data.metadata?.title)}
+  </title>
 </svelte:head>
 
-<div class="h-full {theme}">
-	<slot />
-
-	<button on:click={() => (data.theme = "DARK")}>modo escuro</button>
-	<button on:click={() => (data.theme = "LIGHT")}>modo claro</button>
-	<button on:click={() => (data.theme = "SYSTEM_DEFAULT")}>automatico</button>
-</div>
+<QueryClientProvider client={queryClient}>
+  <div class="min-h-screen {theme}">
+    <div class="min-h-screen dark:bg-zinc-900 md:flex md:gap-12 text-black dark:text-white">
+      <Navigation />
+      <main
+        class="md:w-4/12 max-md:w-11/12 mx-auto pt-8 ">
+        <slot />
+      </main>
+      <SidePanel />
+    </div>
+  </div>
+</QueryClientProvider>
