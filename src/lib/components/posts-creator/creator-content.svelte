@@ -2,6 +2,21 @@
   import { resize } from "$lib/utils/css";
   import { creatorState } from "$lib/stores";
   import { fade } from "svelte/transition";
+
+  let content: HTMLTextAreaElement;
+
+  function shortcutHandler(e: KeyboardEvent) {
+    const { ctrlKey } = e;
+    const key = e.key.toLowerCase();
+
+    const target = e.target as HTMLElement;
+
+    if (!["textarea", "input"].includes(target.tagName.toLowerCase())) {
+      if (key === "n") {
+        content.focus();
+      }
+    }
+  }
 </script>
 
 <input
@@ -13,6 +28,7 @@
   max="4" />
 
 <textarea
+  bind:this={content}
   bind:value={$creatorState.content.body}
   on:input={(e) => {
     resize(e);
@@ -27,6 +43,9 @@
   class="w-full resize-none outline-none"
   placeholder="Eu acho que..." />
 
+<svelte:document on:keydown={shortcutHandler} />
+
 {#if $creatorState.error}
-  <span in:fade out:fade class="text-xs text-red-400">{$creatorState.error}</span>
+  <span in:fade out:fade class="text-xs text-red-400"
+    >{$creatorState.error}</span>
 {/if}

@@ -36,9 +36,8 @@
   }
 
   function endMovement({ forceSnap }: { forceSnap?: boolean } = {}) {
-    if (!draggable) return;
-
     moving = false;
+    if (!draggable) return;
 
     if (snapToOrigin || forceSnap) {
       draggable.animate(
@@ -96,28 +95,25 @@
     }
   }
 
-  function longpressHandler(e: PointerEvent) {
+  function dragStartHandler(e: PointerEvent) {
     startMovement();
     onDragStart(e);
   }
 </script>
 
-<svelte:window
+<svelte:document
   on:pointermove={(e) => {
     movementHandler(e);
     onDragMove(e);
   }}
   on:pointerup={(e) => {
-    e.stopPropagation();
     endMovement();
     onDragEnd(e);
   }} />
 
 <div
   bind:this={draggable}
-  data-longpressms="75"
-  use:longpress
-  on:longpress={longpressHandler}
+  on:pointerdown={dragStartHandler}
   class={twMerge("z-40 bg-white dark:bg-zinc-800", $$props.class)}
   style="transform: {translate}">
   <slot />

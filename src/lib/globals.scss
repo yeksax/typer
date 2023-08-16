@@ -24,6 +24,45 @@ body {
   overflow-x: hidden;
 }
 
+
+/* ===== Scrollbar CSS ===== */
+/* Firefox */
+* {
+  scrollbar-width: auto;
+  scrollbar-color: #000000 #ffffff00;
+
+  @media (prefers-color-scheme: dark) {
+    scrollbar-color: #09090b #ffffff00;
+  }
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: .5rem;
+  height: .5rem;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: black;
+
+  @media (prefers-color-scheme: dark) {
+    background-color: #09090b;
+  }
+}
+
+.border-scroll::-webkit-scrollbar-track {
+  border-left: 2px solid black;
+
+  @media (prefers-color-scheme: dark) {
+    border-left: 2px solid #09090b;
+  }
+}
+
 .hover-effect {
   position: relative;
 
@@ -50,7 +89,8 @@ body {
   }
 }
 
-input, textarea{
+input,
+textarea {
   background-color: transparent;
 }
 

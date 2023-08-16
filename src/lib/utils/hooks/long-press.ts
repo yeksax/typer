@@ -1,5 +1,5 @@
 export function longpress(node: HTMLElement) {
-  const TIME_MS = parseInt(node.dataset.longpressms ?? "300");
+  const TIME_MS = parseInt(node.dataset.longpressms ?? "250");
   let timeoutPtr = 0;
 
   function handleMouseDown(e: Event) {

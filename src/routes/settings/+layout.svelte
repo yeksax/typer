@@ -27,6 +27,7 @@
   </Draggable>
 
   <Draggable
+    snapToOrigin
     class="right-0 rounded-md border-black border-2 absolute border-r-4 border-b-4 dark:border-zinc-950">
     <span class="px-6 h-8 grid place-items-center">
       {$page.data.metadata?.title}
