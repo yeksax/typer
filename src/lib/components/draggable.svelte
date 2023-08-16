@@ -114,7 +114,7 @@
 <div
   bind:this={draggable}
   on:pointerdown={dragStartHandler}
-  class="z-40 {$$restProps.class}"
+  class={twMerge("z-40 bg-white dark:bg-zinc-850", $$restProps.class)}
   style="transform: {translate}">
   <slot />
 </div>
