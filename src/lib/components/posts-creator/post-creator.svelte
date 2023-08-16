@@ -9,11 +9,11 @@
   import CreatorFooter from "./creator-footer.svelte";
   import LoadingBar from "../loading-bar.svelte";
 
-  let draggable: HTMLElement;
+  let form: HTMLFormElement;
   $: locked = $creatorState.locked;
 
   function animateDraggable() {
-    draggable.animate(
+    form.animate(
       [
         { transform: "scale(1)" },
         { transform: "scale(1.025)" },
@@ -52,23 +52,26 @@
   }
 
   function shortcutHandler(e: KeyboardEvent) {
-    // const { ctrlKey, altKey, shiftKey } = e;
+    const { ctrlKey } = e;
     const key = e.key.toLowerCase();
 
     const target = e.target as HTMLElement;
 
-    if (["textarea", "input"].includes(target.tagName.toLowerCase())) return;
-
-    if (key === "escape") {
-      lockDraggable();
-    } else if (key === "n") {
-      unlockDraggable();
+    if (["textarea", "input"].includes(target.tagName.toLowerCase())) {
+      if (ctrlKey && key === "enter") {
+        publishHandler();
+      }
+    } else {
+      if (key === "escape") {
+        lockDraggable();
+      } else if (key === "n") {
+        unlockDraggable();
+      }
     }
   }
 
-  async function publishHandler(e: SubmitEvent) {
-    e.preventDefault();
-    const form = e.target as HTMLFormElement;
+  async function publishHandler(e?: SubmitEvent) {
+    if (e) e.preventDefault();
     const data = new FormData(form);
 
     axios
@@ -93,15 +96,15 @@
   disabled={locked}
   class="rounded-lg border-2 overflow-hidden border-black dark:border-zinc-950 {locked
     ? 'relative mb-4'
-    : 'fixed md:w-4/12 max-md:w-11/12'}">
+    : 'lg:w-4/12 lg:min-w-[30rem] max-lg:w-11/12 fixed border-b-4'}">
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <!-- svelte-ignore a11y-no-static-element-interactions -->
   <form
-    bind:this={draggable}
+    bind:this={form}
     use:longpress
     on:submit={publishHandler}
     on:longpress={longPressHandler}
-    class="{locked ? '' : 'border-b-4'} relative flex gap-4 px-6 py-3 text-sm">
+    class="relative flex gap-4 px-6 py-3 text-sm">
     <LoadingBar channel={user_id} event="publish-progress" />
 
     <img

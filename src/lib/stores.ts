@@ -9,3 +9,5 @@ export const creatorState = writable({
     attachments: [],
   },
 });
+
+export const lastPage = writable("/");

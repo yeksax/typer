@@ -1,11 +1,16 @@
 <script lang="ts">
   import { translateTransformer } from "$lib/utils/css";
+  import { longpress } from "$lib/utils/hooks/long-press";
   import { onMount } from "svelte";
   import { twMerge } from "tailwind-merge";
 
   export let axis: "x" | "y" | undefined = undefined;
   export let snapToOrigin = false;
   export let disabled = false;
+
+  export let onDragStart: (e: PointerEvent) => void = () => {};
+  export let onDragMove: (e: PointerEvent) => void = () => {};
+  export let onDragEnd: (e: PointerEvent) => void = () => {};
 
   let draggable: HTMLElement;
 
@@ -90,16 +95,30 @@
       translate = "";
     }
   }
+
+  function longpressHandler(e: PointerEvent) {
+    startMovement();
+    onDragStart(e);
+  }
 </script>
 
 <svelte:window
-  on:pointermove={movementHandler}
-  on:pointerup={() => endMovement()} />
+  on:pointermove={(e) => {
+    movementHandler(e);
+    onDragMove(e);
+  }}
+  on:pointerup={(e) => {
+    e.stopPropagation();
+    endMovement();
+    onDragEnd(e);
+  }} />
 
 <div
   bind:this={draggable}
-  on:pointerdown={startMovement}
-  class={twMerge("z-40 bg-white dark:bg-zinc-850", $$props.class)}
+  data-longpressms="75"
+  use:longpress
+  on:longpress={longpressHandler}
+  class={twMerge("z-40 bg-white dark:bg-zinc-800", $$props.class)}
   style="transform: {translate}">
   <slot />
 </div>

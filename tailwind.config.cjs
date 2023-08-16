@@ -5,6 +5,7 @@ module.exports = {
     extend: {
       colors: {
         "zinc-850": "rgb(32 32 35)",
+        "zinc-750": "rgb(55,55,61)",
       },
       borderRadius: {
         sm: ".25rem",
