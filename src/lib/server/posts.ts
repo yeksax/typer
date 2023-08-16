@@ -1,6 +1,7 @@
 import { prisma } from "$lib/prisma";
 import type { _Post } from "$lib/types";
 import type { Session } from "@auth/core/types";
+import type { Post } from "@prisma/client";
 
 interface PostFecthOptions {
   session: Session | null;
@@ -14,14 +15,14 @@ interface PostFetchManyOptions extends PostFecthOptions {
   page: number;
   per_page: number;
   options?: {
-    replyingTo: string | null;
+    replyingTo: Post["id"] | null;
   };
 }
 
 export async function getPost({ session, id }: PostFetchSingleOptions) {
   return await prisma.post.findFirst({
     where: {
-      id
+      id: parseInt(id),
     },
     include: {
       thread: {

@@ -9,13 +9,10 @@ import type { RequestEvent } from "../$types";
 
 const PostSchema = object({
   content: string(),
-  attachments: optional(array(instance(File))),
+  attachments: array(instance(File)),
 });
 
-export async function POST({
-  request,
-  locals,
-}: RequestEvent): Promise<Response> {
+export async function POST({ request, locals }: RequestEvent) {
   const session = await locals.getSession();
   const pusher = locals.pusher;
 
@@ -38,7 +35,7 @@ export async function POST({
     throw error(403, "Not authorized");
   }
 
-  pusher.trigger(user.id, "publish-progress", 10);
+  await pusher.trigger(user.id, "publish-progress", 10);
 
   const formData = await request.formData();
   const data: Record<string, FormDataEntryValue | FormDataEntryValue[]> = {};
@@ -60,15 +57,27 @@ export async function POST({
     }
   });
 
-  pusher.trigger(user.id, "publish-progress", 30);
+  data.attachments = (data.attachments as File[]).filter(
+    (file) => file.size > 0
+  );
+
+  await pusher.trigger(user.id, "publish-progress", 30);
 
   const parsed = safeParse(PostSchema, data);
   if (!parsed.success) {
-    pusher.trigger(user.id, "publish-progress", 0);
-    throw error(400, parsed.error);
+    await pusher.trigger(user.id, "publish-progress", 0);
+    throw error(400, "Invalid data");
   }
 
-  pusher.trigger(user.id, "publish-progress", 40);
+  if (
+    parsed.data.content.length === 0 &&
+    parsed.data.attachments?.length === 0
+  ) {
+    await pusher.trigger(user.id, "publish-progress", 0);
+    throw error(400, "Você precisa dizer algo eu acho...");
+  }
+
+  await pusher.trigger(user.id, "publish-progress", 40);
 
   const post: _Post = await prisma.post.create({
     data: {
@@ -124,7 +133,7 @@ export async function POST({
     },
   });
 
-  pusher.trigger(user.id, "publish-progress", 50);
+  await pusher.trigger(user.id, "publish-progress", 50);
 
   const attachmentsCount = data.attachments.length;
   const attachments: Attachment[] = [];
@@ -157,7 +166,7 @@ export async function POST({
         );
       }
 
-      pusher.trigger(
+      await pusher.trigger(
         user.id,
         "publish-progress",
         60 + ((i + 1) / attachmentsCount) * 30
@@ -165,7 +174,7 @@ export async function POST({
     }
   }
 
-  pusher.trigger(user.id, "publish-progress", 80);
+  await pusher.trigger(user.id, "publish-progress", 80);
 
   post.attachments = attachments;
   await pusher.trigger("typer", "new-post", post);

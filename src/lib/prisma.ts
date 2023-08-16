@@ -7,7 +7,7 @@ export const prisma = new PrismaClient({
 
 export const adapter = PrismaAdapter(prisma);
 
-adapter.createUser = async ({ email, name, image, emailVerified }) => {
+adapter.createUser = async ({ email, name, image }) => {
   const tag = Math.floor(Math.random() * 9999)
     .toString()
     .padStart(4, "0");

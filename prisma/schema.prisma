@@ -68,7 +68,7 @@ model User {
   canReceiveDM AnonymousPermissions @default(ALLOWED)
 
   pinnedPost   Post? @relation("PinnedPost", fields: [pinnedPostId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  pinnedPostId String?
+  pinnedPostId Int?
 
   messages      Message[]
   chats         Chat[]
@@ -179,7 +179,7 @@ model Attachment {
   message         Message?       @relation(fields: [messageId], references: [id])
   messageId       String?
   post            Post?          @relation(fields: [postId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  postId          String?
+  postId          Int?
   editedMessage   EditedMessage? @relation(fields: [editedMessageId], references: [id])
   editedMessageId String?
 
@@ -190,7 +190,7 @@ model Attachment {
 }
 
 model Post {
-  id        String      @id @default(cuid())
+  id        Int      @id @default(autoincrement())
   content   String
   deleted   Boolean  @default(false)
   createdAt DateTime @default(now())
@@ -212,8 +212,8 @@ model Post {
   replied  Post? @relation("Replies", fields: [repliedId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   userId    String
-  repostId  String?
-  repliedId String?
+  repostId  Int?
+  repliedId Int?
 
   @@index([userId])
   @@index([repliedId])

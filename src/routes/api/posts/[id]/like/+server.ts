@@ -1,6 +1,6 @@
+import { prisma } from "$lib/prisma";
 import { error, json } from "@sveltejs/kit";
 import type { RequestEvent } from "./$types";
-import { prisma } from "$lib/prisma";
 
 export async function POST({ params, locals }: RequestEvent) {
   const session = await locals.getSession();
@@ -13,7 +13,7 @@ export async function POST({ params, locals }: RequestEvent) {
 
   await prisma.post.update({
     where: {
-      id,
+      id: parseInt(id),
     },
     data: {
       likedBy: {

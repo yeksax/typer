@@ -48,7 +48,7 @@
       slot="icon"
       {...iconProps}
       class="transition-all duration-100 {isLiked
-        ? 'fill-black'
+        ? 'fill-black dark:fill-white'
         : 'fill-transparent'}" />
   </PostStat>
 

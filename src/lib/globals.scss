@@ -53,3 +53,7 @@ body {
 input, textarea{
   background-color: transparent;
 }
+
+pre {
+  @apply whitespace-pre-wrap
+}

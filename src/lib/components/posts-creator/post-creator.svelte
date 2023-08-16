@@ -2,7 +2,7 @@
   import { page } from "$app/stores";
   import { creatorState } from "$lib/stores";
   import { longpress } from "$lib/utils/hooks/long-press";
-  import axios from "axios";
+  import axios, { AxiosError } from "axios";
   import { Minimize2Icon } from "svelte-feather-icons";
   import Draggable from "../draggable.svelte";
   import CreatorContent from "./creator-content.svelte";
@@ -52,7 +52,7 @@
   }
 
   function shortcutHandler(e: KeyboardEvent) {
-    const { ctrlKey, altKey, shiftKey } = e;
+    // const { ctrlKey, altKey, shiftKey } = e;
     const key = e.key.toLowerCase();
 
     const target = e.target as HTMLElement;
@@ -68,9 +68,20 @@
 
   async function publishHandler(e: SubmitEvent) {
     e.preventDefault();
-    const data = new FormData(e.target as HTMLFormElement);
+    const form = e.target as HTMLFormElement;
+    const data = new FormData(form);
 
-    await axios.post("/api/posts/publish", data);
+    axios
+      .post("/api/posts/publish", data)
+      .then((response) => {
+        form.reset();
+      })
+      .catch((e: AxiosError) => {
+        creatorState.update((state) => ({
+          ...state,
+          error: (e.response?.data as any).message,
+        }));
+      });
   }
 
   $: user_id = $page.data.user.id;

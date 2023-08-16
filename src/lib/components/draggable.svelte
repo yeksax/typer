@@ -4,7 +4,7 @@
   import { twMerge } from "tailwind-merge";
 
   export let axis: "x" | "y" | undefined = undefined;
-  export let snapToOrigin: boolean = false;
+  export let snapToOrigin = false;
   export let disabled = false;
 
   let draggable: HTMLElement;
@@ -55,7 +55,7 @@
     }
   }
 
-  function startMovement(e: Event) {
+  function startMovement() {
     if (!disabled) moving = true;
   }
 

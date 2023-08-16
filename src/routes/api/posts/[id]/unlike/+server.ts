@@ -5,7 +5,7 @@ import { prisma } from "$lib/prisma";
 export async function POST({ params, locals }: RequestEvent) {
   const session = await locals.getSession();
 
-  if(!session) {
+  if (!session) {
     throw error(403, "Not authorized");
   }
 
@@ -13,16 +13,16 @@ export async function POST({ params, locals }: RequestEvent) {
 
   await prisma.post.update({
     where: {
-      id,
+      id: parseInt(id),
     },
     data: {
       likedBy: {
         disconnect: {
-          email: session.user?.email as string
-        }
+          email: session.user?.email as string,
+        },
       },
     },
-  })
-  
+  });
+
   return json({ ok: true });
 }

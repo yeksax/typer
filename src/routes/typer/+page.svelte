@@ -36,7 +36,17 @@
   pusherClient
     .subscribe("typer")
     .bind("new-post", (data: _Post) => (newPosts = [data, ...newPosts]));
+
+  function scrollHandler(e: Event) {
+    const target = e.target as HTMLElement;
+
+    if (target.scrollHeight - target.scrollTop < 1500) {
+      $query.fetchNextPage();
+    }
+  }
 </script>
+
+<svelte:body on:scroll={scrollHandler} />
 
 {#if data.session}
   <PostsCreator />

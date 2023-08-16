@@ -2,7 +2,7 @@
   import { page } from "$app/stores";
 
   export let novalue = false;
-  export let value: number = 0;
+  export let value = 0;
   export let clickAction: () => void = () => {};
 
   function clickHandler() {

@@ -7,7 +7,7 @@
     HomeIcon,
     LogInIcon,
     MailIcon,
-    SettingsIcon
+    SettingsIcon,
   } from "svelte-feather-icons";
   import Draggable from "../draggable.svelte";
   import NavigationItem from "./navigation-item.svelte";
@@ -22,8 +22,25 @@
 <!-- mobile navigation -->
 <Draggable
   snapToOrigin
-  class="fixed md:hidden bg-white left-1/2 bottom-4 -translate-x-1/2 w-11/12 text-sm rounded-lg border-t-2 border-4 border-black dark:border-zinc-950 px-4 py-2">
-  i
+  class="fixed lg:hidden flex justify-between bg-white left-1/2 bottom-4 -translate-x-1/2 w-11/12 text-sm rounded-lg border-b-4 border-2 border-black dark:border-zinc-950 px-4 py-2">
+  <NavigationItem href="/typer"><HomeIcon {size} /></NavigationItem>
+  {#if data.session}
+    <NavigationItem href="/notifications"><BellIcon {size} /></NavigationItem>
+    <NavigationItem href="/typos"><MailIcon {size} /></NavigationItem>
+  {/if}
+  {#if data.session}
+    <NavigationItem href="/profile">
+      <img
+        src={data.user.avatar}
+        width="20"
+        height="20"
+        class="w-4 h-4 rounded-sm"
+        alt="" />
+    </NavigationItem>
+    <NavigationItem href="/settings"><SettingsIcon {size} /></NavigationItem>
+  {:else}
+    <NavigationItem href="/signin"><LogInIcon {size} /></NavigationItem>
+  {/if}
 </Draggable>
 
 <div class="flex-1 flex justify-end">
@@ -55,10 +72,8 @@
           </NavigationItem>
           <NavigationItem text="Configurações" href="/settings"
             ><SettingsIcon {size} /></NavigationItem>
-          <button on:click={() => signOut()}>
-            Sair &lt;3
-          </button>
-            {:else}
+          <button on:click={() => signOut()}> Sair &lt;3 </button>
+        {:else}
           <button on:click={() => signIn("github")}>Sign In with GitHub</button>
           <button on:click={() => signIn("google")}>Sign In with Google</button>
           <NavigationItem text="Login" href="/signin"
