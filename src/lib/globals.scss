@@ -44,14 +44,13 @@ body {
 
 *::-webkit-scrollbar-track {
   background: transparent;
-
 }
 
 *::-webkit-scrollbar-thumb {
   background-color: black;
 
   @media (prefers-color-scheme: dark) {
-    background-color: #09090b;
+    background-color: #272729;
   }
 }
 
@@ -59,7 +58,7 @@ body {
   border-left: 2px solid black;
 
   @media (prefers-color-scheme: dark) {
-    border-left: 2px solid #09090b;
+    border-left: 2px solid #272729;
   }
 }
 

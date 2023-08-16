@@ -51,7 +51,7 @@
 <QueryClientProvider client={queryClient}>
   <div class="min-h-screen">
     <div
-      class="min-h-screen dark:bg-zinc-900 md:flex md:gap-12 text-black dark:text-white">
+      class="min-h-screen md:flex md:gap-12">
       <Navigation />
       <main
         class="lg:w-4/12 lg:min-w-[30rem] max-lg:w-11/12 mx-auto pt-8 relative">
