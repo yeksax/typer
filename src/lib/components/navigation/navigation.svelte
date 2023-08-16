@@ -20,28 +20,28 @@
 </script>
 
 <!-- mobile navigation -->
-<Draggable
-  snapToOrigin
-  class="fixed lg:hidden flex justify-between bg-white left-1/2 bottom-4 -translate-x-1/2 w-11/12 text-sm rounded-lg border-b-4 border-2 border-black dark:border-zinc-950 px-8 py-3">
-  <NavigationItem href="/typer"><HomeIcon {size} /></NavigationItem>
-  {#if data.session}
-    <NavigationItem href="/notifications"><BellIcon {size} /></NavigationItem>
-    <NavigationItem href="/typos"><MailIcon {size} /></NavigationItem>
-  {/if}
-  {#if data.session}
-    <NavigationItem href="/settings"><SettingsIcon {size} /></NavigationItem>
-    <NavigationItem href="/profile">
-      <img
-        src={data.user.avatar}
-        width="20"
-        height="20"
-        class="w-4 h-4 rounded-sm"
-        alt="" />
-    </NavigationItem>
-  {:else}
-    <NavigationItem href="/signin"><LogInIcon {size} /></NavigationItem>
-  {/if}
-</Draggable>
+<div class="fixed lg:hidden bottom-4 left-0 w-full z-40 flex justify-center">
+  <Draggable
+    snapToOrigin
+    class="flex justify-between bg-white dark:bg-zinc-850 w-11/12 mr-2 text-sm rounded-lg border-b-4 border-2 border-black dark:border-zinc-950 px-8 py-3">
+    <NavigationItem href="/typer"><HomeIcon {size} /></NavigationItem>
+    {#if data.session}
+      <NavigationItem href="/notifications"><BellIcon {size} /></NavigationItem>
+      <NavigationItem href="/typos"><MailIcon {size} /></NavigationItem>
+      <NavigationItem href="/settings"><SettingsIcon {size} /></NavigationItem>
+      <NavigationItem href="/profile">
+        <img
+          src={data.user.avatar}
+          width="20"
+          height="20"
+          class="w-4 h-4 rounded-sm"
+          alt="" />
+      </NavigationItem>
+    {:else}
+      <NavigationItem href="/signin"><LogInIcon {size} /></NavigationItem>
+    {/if}
+  </Draggable>
+</div>
 
 <div class="hidden lg:flex flex-1 justify-end">
   <div

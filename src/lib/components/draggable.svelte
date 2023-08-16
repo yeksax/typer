@@ -114,7 +114,7 @@
 <div
   bind:this={draggable}
   on:pointerdown={dragStartHandler}
-  class={$$restProps.class}
+  class="z-40 {$$restProps.class}"
   style="transform: {translate}">
   <slot />
 </div>
