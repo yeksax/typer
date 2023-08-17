@@ -55,9 +55,7 @@
   on:click_outside={() => {
     expanded = false;
   }}
-  class="relative font-medium text-xs"
-  in:fly={{ y: -4, opacity: 0, duration: 200 }}
-  out:fly={{ y: -4, opacity: 0, duration: 200 }}>
+  class="relative font-medium text-xs">
   <input type="hidden" {name} {value} />
   <button
     type="button"

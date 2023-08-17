@@ -10,8 +10,6 @@
 
   const size = "28";
 
-  export let data: PageData;
-
   async function handleTheme(new_theme: string) {
     theme.set(new_theme as Preferences["theme"]);
     await axios.post("/api/user/preferences", { theme: new_theme });
