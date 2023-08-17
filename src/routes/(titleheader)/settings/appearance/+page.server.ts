@@ -2,8 +2,6 @@ import type { Load } from "@sveltejs/kit";
 
 export const load: Load = async () => {
   return {
-    metadata: {
-      title: "Configurações",
-    },
+    path: ["Configurações", "Aparência"],
   };
 };

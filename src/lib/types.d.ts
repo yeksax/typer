@@ -1,11 +1,13 @@
 import type { File, Post } from "@prisma/client";
 
 interface _Post extends Post {
-  replies: {
-    author: {
-      avatar: string;
-    };
-  }[] | _Post[];
+  replies:
+    | {
+        author: {
+          avatar: string;
+        };
+      }[]
+    | _Post[];
   thread?: (Post & {
     attachments: File[];
     _count: {
@@ -40,4 +42,9 @@ interface _Post extends Post {
     likedBy: number;
     reposts: number;
   };
+}
+
+interface SelectOption {
+  label: string;
+  value: string;
 }

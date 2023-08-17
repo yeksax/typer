@@ -6,8 +6,9 @@
     <meta name="viewport" content="width=device-width" />
     <script>
       if (
-        localStorage.theme === "dark" ||
-        (!("theme" in localStorage) &&
+        localStorage.theme === "DARK" ||
+        ((!("theme" in localStorage) ||
+          localStorage.theme === "SYSTEM_DEFAULT") &&
           window.matchMedia("(prefers-color-scheme: dark)").matches)
       ) {
         document.documentElement.classList.add("dark");
@@ -17,7 +18,10 @@
     </script>
     %sveltekit.head%
   </head>
-  <body data-sveltekit-preload-data="hover" class="dark:bg-zinc-900 text-black dark:text-white">
+  <body
+    data-sveltekit-preload-data="hover"
+    class="dark:bg-zinc-900 text-black dark:text-white"
+  >
     <div style="display: contents">%sveltekit.body%</div>
   </body>
 </html>

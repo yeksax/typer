@@ -41,7 +41,7 @@
       requires: session,
       mobile: false,
     },
-  };
+  } as const;
 
   const sessionRelatedNavigationMap = {
     Perfil: {
@@ -62,7 +62,7 @@
       requires: !session,
       mobile: true,
     },
-  };
+  } as const;
 
   const mobileNavigation = { ...sessionRelatedNavigationMap, ...navigationMap };
 
@@ -83,12 +83,14 @@
   class="fixed lg:hidden pr-2 bottom-4 left-1/2 -translate-x-1/2 w-11/12 z-40 flex items-center flex-col gap-2">
   <Draggable
     snapToOrigin
+    minimumHoldTime={150}
     class="lg:hidden self-end rounded-lg p-2 border-2 border-b-4 border-r-4 border-black dark:border-zinc-950">
     <EditIcon {size} />
   </Draggable>
 
   <Draggable
     snapToOrigin
+    minimumHoldTime={150}
     class="flex justify-between bg-white dark:bg-zinc-850 w-full text-sm rounded-lg border-2 border-b-4  border-black dark:border-zinc-950 px-8 py-3">
     {#each [...navigation, ...sessionRelated] as path}
       {@const nav_item = mobileNavigation[path]}
@@ -110,12 +112,10 @@
       <div class={defaultClasses}>
         {#each navigation as path}
           {@const nav_item = navigationMap[path]}
-          {#if nav_item.mobile}
-            {#if nav_item.requires}
-              <NavigationItem href={nav_item.href} text={path}>
-                <svelte:component this={nav_item.icon} {size} />
-              </NavigationItem>
-            {/if}
+          {#if nav_item.requires}
+            <NavigationItem href={nav_item.href} text={path}>
+              <svelte:component this={nav_item.icon} {size} />
+            </NavigationItem>
           {/if}
         {/each}
       </div>

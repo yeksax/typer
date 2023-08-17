@@ -16,12 +16,6 @@ export async function POST({ request, locals }: RequestEvent) {
   const session = await locals.getSession();
   const pusher = locals.pusher;
 
-  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE, {
-    auth: {
-      persistSession: false,
-    },
-  });
-
   if (!session) {
     throw error(403, "Not authorized");
   }
@@ -36,7 +30,7 @@ export async function POST({ request, locals }: RequestEvent) {
   });
 
   if (!user) {
-    throw error(403, "Not authorized");
+    throw error(404, "User not found");
   }
 
   await pusher.trigger(user.id, "publish-progress", 10);
@@ -143,6 +137,12 @@ export async function POST({ request, locals }: RequestEvent) {
   const attachments: Attachment[] = [];
 
   if (attachmentsCount > 0) {
+    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE, {
+      auth: {
+        persistSession: false,
+      },
+    });
+
     for (let i = 0; i < attachmentsCount; i++) {
       const file = (data.attachments as File[])[i];
       const ext = file.name.split(".").pop();

@@ -4,7 +4,7 @@
   import { createInfiniteQuery } from "@tanstack/svelte-query";
   import { LoaderIcon } from "svelte-feather-icons";
   import type { _Post } from "$lib/types";
-  import type { PageData } from "./$types";
+  import type { PageData } from "../(test)/typer/$types";
   import { pusherClient } from "$lib/pusher";
 
   export let data: PageData;

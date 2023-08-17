@@ -4,6 +4,7 @@
   import { onMount } from "svelte";
   import { twMerge } from "tailwind-merge";
 
+  export let minimumHoldTime = 0;
   export let axis: "x" | "y" | undefined = undefined;
   export let snapToOrigin = false;
   export let disabled = false;
@@ -80,8 +81,6 @@
       translateY = translate.y.value + translateTransformer(translate.x.unit);
     }
 
-    // initialX = rect.left;
-    // initialY = rect.top;
     ready = true;
   });
 
@@ -96,6 +95,17 @@
   }
 
   function dragStartHandler(e: PointerEvent) {
+    const preventFromTheseTags = [
+      "INPUT",
+      "TEXTAREA",
+      "SELECT",
+      "BUTTON",
+      "ANCHOR",
+    ];
+
+    if (preventFromTheseTags.includes((e.target as HTMLElement).tagName))
+      return;
+
     startMovement();
     onDragStart(e);
   }
@@ -113,7 +123,9 @@
 
 <div
   bind:this={draggable}
-  on:pointerdown={dragStartHandler}
+  use:longpress
+  on:longpress={dragStartHandler}
+  data-longpressms={minimumHoldTime}
   class={twMerge("z-40 bg-white dark:bg-zinc-850", $$restProps.class)}
   style="transform: {translate}">
   <slot />

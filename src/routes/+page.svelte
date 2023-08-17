@@ -1,5 +1,5 @@
 <script>
-  import Button from "$lib/components/button.svelte";
+  import Button from "$lib/components/button/button.svelte";
 </script>
 
 <div
