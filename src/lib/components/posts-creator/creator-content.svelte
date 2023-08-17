@@ -5,7 +5,7 @@
 
   let content: HTMLTextAreaElement;
 
-  function shortcutHandler(e: KeyboardEvent) {
+  function globalShortcutHandler(e: KeyboardEvent) {
     const { ctrlKey } = e;
     const key = e.key.toLowerCase();
 
@@ -13,11 +13,23 @@
 
     if (!["textarea", "input"].includes(target.tagName.toLowerCase())) {
       if (key === "n") {
-        content.focus();
+        setTimeout(() => {
+          content.focus();
+        }, 100);
       }
     }
   }
+
+  function shortcutHandler(e: KeyboardEvent) {
+    const key = e.key.toLowerCase();
+
+    if (key === "escape") {
+      content.blur();
+    }
+  }
 </script>
+
+<svelte:document on:keydown={globalShortcutHandler} />
 
 <input
   class="hidden"
@@ -29,6 +41,7 @@
 
 <textarea
   bind:this={content}
+  on:keydown={shortcutHandler}
   bind:value={$creatorState.content.body}
   on:input={(e) => {
     resize(e);
@@ -42,8 +55,6 @@
   name="content"
   class="w-full resize-none outline-none"
   placeholder="Eu acho que..." />
-
-<svelte:document on:keydown={shortcutHandler} />
 
 {#if $creatorState.error}
   <span in:fade out:fade class="text-xs text-red-400"

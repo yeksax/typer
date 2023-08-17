@@ -16,7 +16,11 @@ export async function POST({ request, locals }: RequestEvent) {
   const session = await locals.getSession();
   const pusher = locals.pusher;
 
-  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE);
+  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE, {
+    auth: {
+      persistSession: false,
+    },
+  });
 
   if (!session) {
     throw error(403, "Not authorized");

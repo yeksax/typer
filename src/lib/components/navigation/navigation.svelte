@@ -3,6 +3,7 @@
   import {
     BellIcon,
     BookmarkIcon,
+    EditIcon,
     HomeIcon,
     LogInIcon,
     MailIcon,
@@ -78,10 +79,17 @@
 </script>
 
 <!-- mobile navigation -->
-<div class="fixed lg:hidden bottom-4 left-0 w-full z-40 flex justify-center">
+<div
+  class="fixed lg:hidden pr-2 bottom-4 left-1/2 -translate-x-1/2 w-11/12 z-40 flex items-center flex-col gap-2">
   <Draggable
     snapToOrigin
-    class="flex justify-between bg-white dark:bg-zinc-850 w-11/12 mr-2 text-sm rounded-lg border-2 border-b-4  border-black dark:border-zinc-950 px-8 py-3">
+    class="lg:hidden self-end rounded-lg p-2 border-2 border-b-4 border-r-4 border-black dark:border-zinc-950">
+    <EditIcon {size} />
+  </Draggable>
+
+  <Draggable
+    snapToOrigin
+    class="flex justify-between bg-white dark:bg-zinc-850 w-full text-sm rounded-lg border-2 border-b-4  border-black dark:border-zinc-950 px-8 py-3">
     {#each [...navigation, ...sessionRelated] as path}
       {@const nav_item = mobileNavigation[path]}
       {#if nav_item.mobile}

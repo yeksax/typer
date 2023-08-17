@@ -78,6 +78,10 @@
       .post("/api/posts/publish", data)
       .then((response) => {
         form.reset();
+        creatorState.update((state) => ({
+          ...state,
+          content: { attachments: [], body: "" },
+        }));
       })
       .catch((e: AxiosError) => {
         creatorState.update((state) => ({
@@ -104,7 +108,7 @@
     use:longpress
     on:submit={publishHandler}
     on:longpress={longPressHandler}
-    class="relative flex gap-4 px-6 py-3 text-sm">
+    class="flex gap-4 px-6 py-3 text-sm">
     <LoadingBar channel={user_id} event="publish-progress" />
 
     <img
