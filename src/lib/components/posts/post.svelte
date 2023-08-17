@@ -19,7 +19,7 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
   on:click={() => goto(`/${post.author.username}/type/${post.id}`)}
-  class="post rounded-lg cursor-pointer border-2 bg-white dark:bg-zinc-850 border-black dark:border-zinc-950 flex gap-4 px-6 py-3 text-sm">
+  class="post rounded-lg cursor-pointer border-2 bg-white dark:bg-zinc-850 dark:hover:bg-zinc-800 transition-all border-black dark:border-zinc-950 flex gap-4 px-6 py-3 text-sm">
   <div class="flex flex-col items-center">
     <img class="rounded-md w-9 aspect-square" src={post.author.avatar} alt="" />
 

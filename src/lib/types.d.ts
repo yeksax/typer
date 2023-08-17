@@ -5,7 +5,7 @@ interface _Post extends Post {
     author: {
       avatar: string;
     };
-  }[];
+  }[] | _Post[];
   thread?: (Post & {
     attachments: File[];
     _count: {
