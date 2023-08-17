@@ -1,8 +1,8 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import Draggable from "$lib/components/draggable.svelte";
-  import { router } from "$lib/utils/navigation";
   import { ChevronLeftIcon } from "svelte-feather-icons";
+  import { router } from "$lib/utils/router";
 
   let disableButtons = false;
 
@@ -33,7 +33,7 @@
         {#if $page.data.path}
           {#each $page.data.path as path, i}
             <a
-              href={pathname.slice(0, pathname.length - i -1).join("/")}
+              href={pathname.slice(0, pathname.length - i - 1).join("/")}
               class={i === 0 ? "" : "opacity-75"}>
               {#if i > 0}
                 &gt;

@@ -1,14 +1,15 @@
 <script lang="ts">
   import { browser } from "$app/environment";
-  import { afterNavigate } from "$app/navigation";
+  import { afterNavigate, beforeNavigate } from "$app/navigation";
   import { page } from "$app/stores";
   import Navigation from "$lib/components/navigation/navigation.svelte";
   import SidePanel from "$lib/components/side-panel/side-panel.svelte";
   import "$lib/globals.scss";
   import { theme } from "$lib/stores";
   import { pageTitle } from "$lib/utils/metadata";
-  import { router } from "$lib/utils/navigation";
+  import { router } from "$lib/utils/router";
   import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
+  import { onMount } from "svelte";
 
   $theme = $page.data.theme ?? "SYSTEM_DEFAULT";
 
@@ -37,7 +38,12 @@
     },
   });
 
-  afterNavigate(({ to }) => {
+  onMount(() => {
+    router.register($page.url.pathname);
+  });
+
+  afterNavigate(({ to, type }) => {
+    if (type === "goto") return;
     router.register(to?.url.pathname ?? "/");
   });
 </script>

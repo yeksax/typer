@@ -11,8 +11,8 @@
   )}>
   <slot name="icon" />
 
-  <div class="flex flex-col gap-0.5 w-full">
-    <div class="flex items-center justify-between text-sm">
+  <div class="flex flex-col gap-1 w-full">
+    <div class="flex items-start justify-between text-sm">
       <slot name="title" />
       <slot name="value" />
     </div>

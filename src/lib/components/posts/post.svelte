@@ -4,7 +4,7 @@
   import { fly } from "svelte/transition";
   import type { _Post } from "../../types";
   import PostStats from "./post-stats.svelte";
-  import { router } from "$lib/utils/navigation";
+  import { router } from "$lib/utils/router";
 
   export let post: _Post;
   export let showStats = true;
@@ -21,7 +21,7 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
-  in:fly={{ y: -20, opacity: 0, duration: 500, easing: cubicInOut }}
+  in:fly={{ y: -5, opacity: 0, duration: 500, easing: cubicInOut }}
   on:click={() => router.push(`/${post.author.username}/type/${post.id}`)}
   class="post rounded-lg cursor-pointer border-2 bg-white dark:bg-zinc-850 dark:hover:bg-zinc-800 transition-all border-black dark:border-zinc-950 flex gap-4 px-6 py-3 text-sm">
   <div class="flex flex-col items-center">

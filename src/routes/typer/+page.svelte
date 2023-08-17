@@ -40,7 +40,7 @@
   function scrollHandler(e: Event) {
     const target = e.target as HTMLElement;
 
-    if (target.scrollHeight - target.scrollTop < 1500) {
+    if (target.scrollHeight - target.scrollTop < 1500 && !$query.isFetching) {
       $query.fetchNextPage();
     }
   }
@@ -51,7 +51,7 @@
 {#if data.session}
   <PostsCreator />
 {/if}
-<div class="flex flex-col gap-3 pb-[100%]">
+<div class="flex flex-col gap-2 pb-[100%]">
   {#if $query.isLoading}
     <span class="text-sm text-zinc-500">Todo: Skeletons</span>
   {/if}
