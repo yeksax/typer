@@ -36,10 +36,10 @@ function regexCreator(route: string) {
 async function authorization({ event, resolve }: any) {
   const session = await event.locals.getSession();
   let isRouteProtected = false;
+  const url = new URL(event.request.url);
 
   for (let i = 0; i < PROTECTED_ROUTES.length; i++) {
     const regex = regexCreator(PROTECTED_ROUTES[i]);
-    const url = new URL(event.request.url);
     isRouteProtected = regex.test(url.pathname);
     if (isRouteProtected) {
       break;
@@ -47,7 +47,7 @@ async function authorization({ event, resolve }: any) {
   }
 
   if (!session && isRouteProtected) {
-    throw redirect(303, "/");
+    throw redirect(303, "/signin?next=" + url.pathname);
   }
 
   return resolve(event);

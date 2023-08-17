@@ -61,7 +61,7 @@
     type="button"
     bind:this={setectRef}
     on:click={toggle}
-    class="flex px-2.5 py-0.5 border-black dark:border-zinc-950 dark:bg-zinc-750 items-center gap-2 relative {expanded
+    class="virtual-clickable flex px-2.5 py-0.5 border-black dark:border-zinc-950 dark:bg-zinc-750 items-center gap-2 relative {expanded
       ? 'opacity-100'
       : 'opacity-80'} hover:opacity-100 transition-all border-2 rounded-md">
     <slot />

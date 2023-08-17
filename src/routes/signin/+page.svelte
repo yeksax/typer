@@ -1,18 +1,23 @@
 <script lang="ts">
+  import { page } from "$app/stores";
   import { signIn } from "@auth/sveltekit/client";
   import { Icon } from "svelte-awesome";
   import { github, google } from "svelte-awesome/icons";
 
-  function signWithGoogle() {
-    signIn("google", {
-      callbackUrl: "/typer",
+  function signInAndRedirect(provider: string) {
+    const redirect = $page.url.searchParams.get("next");
+
+    signIn(provider, {
+      callbackUrl: redirect ?? "/typer",
     });
   }
 
+  function signWithGoogle() {
+    signInAndRedirect("google");
+  }
+
   function signWithGithub() {
-    signIn("github", {
-      callbackUrl: "/typer",
-    });
+    signInAndRedirect("github");
   }
 </script>
 

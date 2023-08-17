@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import Option from "$lib/components/settings/option.svelte";
+  import Preference from "$lib/components/settings/preference.svelte";
   import { MonitorIcon, MoonIcon, SunIcon } from "svelte-feather-icons";
   import type { PageData } from "./$types";
   import Select from "$lib/components/select/select.svelte";
@@ -17,7 +17,7 @@
 </script>
 
 <div class="flex flex-col gap-2">
-  <Option>
+  <Preference>
     <span class="w-8 grid place-items-center" slot="icon">
       {#if $theme === "DARK"}
         <MoonIcon class="dark:fill-white fill-black stroke-none" {size} />
@@ -29,22 +29,23 @@
           size={(parseInt(size) * 0.8).toString()} />
       {/if}
     </span>
-    <div slot="head" class="flex items-center justify-between text-sm">
-      Tema
-      <Select
-        action={handleTheme}
-        title="Tema"
-        value={$theme}
-        values={[
-          { label: "Escuro", value: "DARK" },
-          { label: "Claro", value: "LIGHT" },
-          { label: "Seguir o sistema", value: "SYSTEM_DEFAULT" },
-        ]} />
-    </div>
+    <span slot="title" class="font-semibold">Tema</span>
+
+    <Select
+      slot="value"
+      action={handleTheme}
+      title="Selecione um tema"
+      value={$theme}
+      values={[
+        { label: "Escuro", value: "DARK" },
+        { label: "Claro", value: "LIGHT" },
+        { label: "Seguir o sistema", value: "SYSTEM_DEFAULT" },
+      ]} />
+      
     <p slot="description" class="text-xs opacity-75">
       Ajuste o tema de acordo com seu gosto visual
     </p>
-  </Option>
+  </Preference>
 </div>
 
 <!-- <a
