@@ -100,7 +100,7 @@
   disabled={locked}
   class="rounded-lg border-2 overflow-hidden border-black dark:border-zinc-950 {locked
     ? 'relative mb-4'
-    : 'lg:w-4/12 lg:min-w-[30rem] max-lg:w-11/12 fixed border-b-4 py-1.5 px-2 box-content'}">
+    : 'lg:w-4/12 lg:min-w-[30rem] max-lg:w-11/12 fixed border-b-4 md:px-1 box-content'}">
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <!-- svelte-ignore a11y-no-static-element-interactions -->
   <form

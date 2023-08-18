@@ -50,7 +50,7 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
-  class="cursor-auto"
+  class="cursor-auto {$$props.class}"
   on:pointerleave={handlePointerLeave}
   on:pointerenter={handlePointerEnter}
   on:click={(e) => {

@@ -1,6 +1,7 @@
 import { error, json } from "@sveltejs/kit";
 import type { RequestEvent } from "./$types";
 import { prisma } from "$lib/prisma";
+import { Notifier } from "$lib/server/notifications";
 
 export async function POST({ params, locals }: RequestEvent) {
   const session = await locals.getSession();
@@ -11,7 +12,17 @@ export async function POST({ params, locals }: RequestEvent) {
 
   const { id } = params;
 
-  await prisma.post.update({
+  const user = await prisma.user.findUnique({
+    where: {
+      email: session.user!.email as string,
+    },
+  });
+
+  if (!user) {
+    throw error(404, "User not found");
+  }
+
+  const post = await prisma.post.update({
     where: {
       id: parseInt(id),
     },
@@ -22,7 +33,16 @@ export async function POST({ params, locals }: RequestEvent) {
         },
       },
     },
+    include: {
+      author: true,
+    },
   });
+
+  const notifier = new Notifier(locals.pusher, { id: post.author.id });
+
+  notifier.removeParticipation(`${post.author.id}__${post.id}__like`, [
+    { id: user.id as string },
+  ]);
 
   return json({ ok: true });
 }

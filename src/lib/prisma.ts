@@ -2,7 +2,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 
 export const prisma = new PrismaClient({
-  log: ["error", "info"],
+  log: ["error", "info", "warn"],
 });
 
 export const adapter = PrismaAdapter(prisma);

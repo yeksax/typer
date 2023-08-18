@@ -2,6 +2,7 @@
   import { browser } from "$app/environment";
   import { afterNavigate, beforeNavigate } from "$app/navigation";
   import { page } from "$app/stores";
+  import NotificationsHandler from "$lib/components/handlers/notifications-handler.svelte";
   import Navigation from "$lib/components/navigation/navigation.svelte";
   import SidePanel from "$lib/components/side-panel/side-panel.svelte";
   import "$lib/globals.scss";
@@ -55,14 +56,16 @@
 </svelte:head>
 
 <QueryClientProvider client={queryClient}>
-  <div class="min-h-screen">
-    <div class="min-h-screen md:flex md:gap-12">
-      <Navigation />
-      <main
-        class="lg:w-4/12 lg:min-w-[30rem] max-lg:w-11/12 mx-auto pt-8 relative">
-        <slot />
-      </main>
-      <SidePanel />
+  <NotificationsHandler>
+    <div class="min-h-screen">
+      <div class="min-h-screen md:flex md:gap-12">
+        <Navigation />
+        <main
+          class="lg:w-4/12 lg:min-w-[30rem] max-lg:w-11/12 mx-auto pt-8 relative">
+          <slot />
+        </main>
+        <SidePanel />
+      </div>
     </div>
-  </div>
+  </NotificationsHandler>
 </QueryClientProvider>

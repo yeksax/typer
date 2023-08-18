@@ -1,4 +1,5 @@
 import { prisma } from "$lib/prisma";
+import { Notifier } from "$lib/server/notifications.js";
 import { error, json } from "@sveltejs/kit";
 
 export async function POST({ params, locals }) {
@@ -10,7 +11,17 @@ export async function POST({ params, locals }) {
 
   const { username } = params;
 
-  await prisma.user.update({
+  const user = await prisma.user.findUnique({
+    where: {
+      email: session.user!.email as string,
+    },
+  })
+
+  if (!user) {
+    throw error(404, "User not found");
+  }
+
+  const target = await prisma.user.update({
     where: {
       username,
     },
@@ -21,6 +32,25 @@ export async function POST({ params, locals }) {
         },
       },
     },
+    select: {
+      id: true,
+    },
+  });
+
+  const notifier = new Notifier(locals.pusher, { id: target.id });
+
+  const day = new Date().getDay();
+  const month = new Date().getMonth();
+  const year = new Date().getFullYear();
+
+  const date = `${year}-${month}-${day}`;
+
+  notifier.handle({
+    action: "FOLLOW",
+    actors: [{ id: user.id as string }],
+    redirect: `${user.username}`,
+    reference: `${target.id}__${date}__follows`,
+    title: `te $_0`,
   });
 
   return json({ ok: true });

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from "$app/stores";
+  import { creatorState, notifications, unreadNotifications } from "$lib/stores";
   import {
     BellIcon,
     BookmarkIcon,
@@ -10,11 +11,21 @@
     SettingsIcon,
     UserIcon,
   } from "svelte-feather-icons";
+  import type { Writable } from "svelte/store";
   import Draggable from "../draggable.svelte";
   import NavigationItem from "./navigation-item.svelte";
 
-  $: data = $page.data;
   const session = !!$page.data.session;
+
+  interface Navigation {
+    [key: string]: {
+      icon: any;
+      href: string;
+      requires: boolean;
+      mobile: boolean;
+      blob?: Writable<number | string>;
+    };
+  }
 
   const navigationMap = {
     Home: {
@@ -28,6 +39,7 @@
       href: "/notifications",
       requires: session,
       mobile: true,
+      blob: unreadNotifications,
     },
     Mensagens: {
       icon: MailIcon,
@@ -41,7 +53,7 @@
       requires: session,
       mobile: false,
     },
-  } as const;
+  } as Navigation;
 
   const sessionRelatedNavigationMap = {
     Perfil: {
@@ -62,20 +74,20 @@
       requires: !session,
       mobile: true,
     },
-  } as const;
+  } as Navigation;
 
   const mobileNavigation = { ...sessionRelatedNavigationMap, ...navigationMap };
 
-  const navigation = Object.keys(
-    navigationMap
-  ) as (keyof typeof navigationMap)[];
-  const sessionRelated = Object.keys(
-    sessionRelatedNavigationMap
-  ) as (keyof typeof sessionRelatedNavigationMap)[];
+  const navigation = Object.keys(navigationMap) as string[];
+  const sessionRelated = Object.keys(sessionRelatedNavigationMap) as string[];
 
   const defaultClasses =
     "flex flex-col items-start gap-6 px-8 bg-white dark:bg-zinc-850 py-4 border-l-4 border-2 border-black dark:border-zinc-950 rounded-md";
   const size = "16";
+
+  function unlockCreator() {
+    creatorState.update((v) => ({ ...v, locked: false }));
+  }
 </script>
 
 <!-- mobile navigation -->
@@ -84,8 +96,10 @@
   <Draggable
     snapToOrigin
     minimumHoldTime={150}
-    class="lg:hidden self-end rounded-lg p-2 border-2 border-b-4 border-r-4 border-black dark:border-zinc-950">
-    <EditIcon {size} />
+    class="lg:hidden self-end rounded-lg border-2 border-b-4 border-r-4 border-black dark:border-zinc-950">
+    <button class="aspect-square p-2" on:click={unlockCreator}>
+      <EditIcon {size} />
+    </button>
   </Draggable>
 
   <Draggable
@@ -96,7 +110,7 @@
       {@const nav_item = mobileNavigation[path]}
       {#if nav_item.mobile}
         {#if nav_item.requires}
-          <NavigationItem href={nav_item.href}>
+          <NavigationItem blob={nav_item.blob} href={nav_item.href}>
             <svelte:component this={nav_item.icon} {size} />
           </NavigationItem>
         {/if}
@@ -113,7 +127,10 @@
         {#each navigation as path}
           {@const nav_item = navigationMap[path]}
           {#if nav_item.requires}
-            <NavigationItem href={nav_item.href} text={path}>
+            <NavigationItem
+              href={nav_item.href}
+              text={path}
+              blob={nav_item.blob}>
               <svelte:component this={nav_item.icon} {size} />
             </NavigationItem>
           {/if}
@@ -125,7 +142,10 @@
           {@const nav_item = sessionRelatedNavigationMap[path]}
           {#if nav_item.mobile}
             {#if nav_item.requires}
-              <NavigationItem href={nav_item.href} text={path}>
+              <NavigationItem
+                blob={nav_item.blob}
+                href={nav_item.href}
+                text={path}>
                 <svelte:component this={nav_item.icon} {size} />
               </NavigationItem>
             {/if}

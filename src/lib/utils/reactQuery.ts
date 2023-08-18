@@ -4,10 +4,18 @@ export function infiniteQuery<T>({
   queryKeys,
   queryURL,
   limit,
+  options,
 }: {
   queryKeys: string[];
   queryURL: string;
   limit?: number;
+  options?: {
+    customFN: ({
+      pageParam,
+    }: {
+      pageParam?: number | undefined;
+    }) => Promise<{ next?: string; data: T[] }>;
+  };
 }) {
   const query = async ({
     pageParam = 1,
@@ -18,7 +26,7 @@ export function infiniteQuery<T>({
 
   return createInfiniteQuery({
     queryKey: queryKeys,
-    queryFn: query,
+    queryFn: options?.customFN || query,
     getNextPageParam: (lastPage: any) => {
       if (lastPage.next) {
         const nextUrl = new URLSearchParams(new URL(lastPage.next).search);

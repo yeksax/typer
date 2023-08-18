@@ -9,6 +9,7 @@ export const load: LayoutServerLoad = async (event) => {
       email: String(session?.user?.email),
     },
     include: {
+      preferences: true,
       followers: {
         select: {
           username: true,
@@ -21,17 +22,17 @@ export const load: LayoutServerLoad = async (event) => {
       },
       _count: {
         select: {
-          notifications: true,
+          notifications: {
+            where: {
+              isRead: false,
+            },
+          },
         },
       },
     },
   });
 
-  const preferences = await prisma.preferences.findFirst({
-    where: {
-      userId: String(user?.id),
-    },
-  });
+  const preferences = user?.preferences;
 
   return {
     session,

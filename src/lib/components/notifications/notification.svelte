@@ -48,37 +48,45 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
-  on:click={() => router.push(`/${notification.redirect}`)}
-  class="flex flex-col gap-1 text-sm px-6 py-2 border-black dark:border-zinc-950 rounded-md border-2">
-  <div class="h-7 mb-2">
-    {#each actors as actor, i (actor.username)}
-      <InformationCard user={actor}>
-        <img
-          src={actor.avatar}
-          alt="foto de {actor.name}"
-          class="slide-left rounded-md w-7 aspect-square absolute transition-all x-0"
-          style="--x: {(actors.length - i - 1) * 1}rem; --i: {(actors.length -
-            i -
-            1) *
-            100}ms" />
-      </InformationCard>
-    {/each}
-  </div>
+  class="{notification.isRead
+    ? 'bg-white dark:bg-zinc-850'
+    : 'bg-zinc-100 dark:bg-zinc-800'} flex gap-8 items-center cursor-pointer text-sm px-6 md:px-8 py-3 md:py-4 border-black dark:border-zinc-950 rounded-md border-2">
+  <div
+    on:click={() => router.push(`/${notification.redirect}`)}
+    class="flex-1 flex flex-col gap-1">
+    <div class="h-6">
+      {#each actors as actor, i (actor.username)}
+        <InformationCard user={actor}>
+          <img
+            src={actor.avatar}
+            alt="foto de {actor.name}"
+            class="slide-left rounded-md w-6 aspect-square absolute transition-all x-0"
+            style="--x: {(actors.length - i - 1) * 1}rem; --i: {(actors.length -
+              i -
+              1) *
+              100}ms" />
+        </InformationCard>
+      {/each}
+    </div>
 
-  <h3>
-    <InformationCard user={actors[0]}>
-      <span class="font-semibold">
-        {actors.at(-1)?.name}
-      </span>
-    </InformationCard>
-    <span>
+    <span class="mt-1">
+      <InformationCard class="inline" user={actors[0]}>
+        <span class="font-semibold">
+          {actors.at(-1)?.name}
+        </span>
+      </InformationCard>
       {paramReplacing(notification.title, [actorsString])}
     </span>
-  </h3>
 
-  <div class="text-xs opacity-75">
-    {notification.text}
+    {#if notification.text}
+      <div class="text-xs opacity-95">
+        {notification.text}
+      </div>
+    {/if}
   </div>
+  <svelte:component
+    this={actionIcon}
+    class="dark:fill-white dark:stroke-white fill-black stroke-black" />
 </div>
 
 <style lang="scss">

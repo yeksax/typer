@@ -9,16 +9,6 @@ export async function GET({ locals, request }) {
     throw error(403, "Not authorized");
   }
 
-  const user = await prisma.user.findUnique({
-    where: {
-      email: session.user!.email as string,
-    },
-  });
-
-  if (!user) {
-    throw error(404, "User not found");
-  }
-
   const searchParams = new URL(request.url).searchParams;
   let page: string | number | null = searchParams.get("page");
   let per_page: string | number | null = searchParams.get("per_page");
@@ -37,30 +27,53 @@ export async function GET({ locals, request }) {
     per_page = parseInt(per_page);
   }
 
-  const notifications: _Notification[] = await prisma.notification.findMany({
+  const user = await prisma.user.findUnique({
     where: {
-      receiverId: user.id,
+      email: session.user!.email as string,
     },
-    take: per_page + 1,
-    skip: (page - 1) * per_page,
     include: {
-      notificationActors: {
-        select: {
-          avatar: true,
-          username: true,
-          name: true,
-          tag: true,
-          banner: true,
-          biography: true,
-          displayName: true,
-          _count: {
+      notifications: {
+        take: per_page + 1,
+        skip: (page - 1) * per_page,
+        orderBy: {
+          updatedAt: "desc",
+        },
+        include: {
+          notificationActors: {
             select: {
-              followers: true,
-              following: true,
+              avatar: true,
+              username: true,
+              name: true,
+              tag: true,
+              banner: true,
+              biography: true,
+              displayName: true,
+              _count: {
+                select: {
+                  followers: true,
+                  following: true,
+                },
+              },
             },
           },
         },
       },
+    },
+  });
+
+  if (!user) {
+    throw error(404, "User not found");
+  }
+
+  const notifications = user.notifications as _Notification[];
+
+  await prisma.notification.updateMany({
+    where: {
+      receiverId: user.id,
+      isRead: false,
+    },
+    data: {
+      isRead: true,
     },
   });
 

@@ -181,7 +181,7 @@ model Post {
   deleted   Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
-  author    User     @relation(fields: [userId], references: [id])
+  author    User     @relation(fields: [authorId], references: [id])
 
   thread  Post[] @relation("Thread")
   replies Post[] @relation("Replies")
@@ -197,11 +197,11 @@ model Post {
   repost  Post? @relation("Reposts", fields: [repostId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   replied Post? @relation("Replies", fields: [repliedId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  userId    String
+  authorId    String @map("userId")
   repostId  Int?
   repliedId Int?
 
-  @@index([userId])
+  @@index([authorId])
   @@index([repliedId])
 }
 
@@ -216,7 +216,7 @@ model Notification {
 
   icon     String?
   title    String
-  text     String
+  text     String?
   isRead   Boolean @default(false)
   redirect String
 
