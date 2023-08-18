@@ -1,27 +1,32 @@
 <script lang="ts">
+  import { page } from "$app/stores";
+  import { newFollows, newUnfollows } from "$lib/stores";
   import type { MinifiedUser } from "$lib/types";
   import { longhover } from "$lib/utils/hooks/long-hover";
   import { fly } from "svelte/transition";
   import FollowButton from "./follow-button.svelte";
-  import { page } from "$app/stores";
-  import { newFollows, newUnfollows } from "$lib/stores";
 
   let [x, y] = [0, 0];
 
   export let user: MinifiedUser;
 
-  $: iFollow = $page.data.user.following
-    .map((user: MinifiedUser) => user.username)
-    .includes(user.username);
-
-  $: followsMe = $page.data.user.followers
-    .map((user: MinifiedUser) => user.username)
-    .includes(user.username);
-
-  const isMe = user.username === $page.data.user.username;
-  let mouseOutTimer: NodeJS.Timeout | null = null;
-
+  let iFollow = false;
+  let followsMe = false;
+  let isMe = false;
   let visible = false;
+
+  $: if ($page.data.user) {
+    iFollow = $page.data.user.following
+      .map((user: MinifiedUser) => user.username)
+      .includes(user.username);
+    followsMe = $page.data.user.followers
+      .map((user: MinifiedUser) => user.username)
+      .includes(user.username);
+
+    isMe = user.username === $page.data.user.username;
+  }
+
+  let mouseOutTimer: NodeJS.Timeout | null = null;
 
   function longHoverHandler(
     e: CustomEvent & { detail: { x: number; y: number } }

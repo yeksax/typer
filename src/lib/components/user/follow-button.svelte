@@ -2,30 +2,42 @@
   import { page } from "$app/stores";
   import { newFollows, newUnfollows } from "$lib/stores";
   import type { MinifiedUser } from "$lib/types";
+  import { router } from "$lib/utils/router";
   import axios from "axios";
   import { twMerge } from "tailwind-merge";
 
   export let user: MinifiedUser;
   let hovering = false;
+  let isFollowing = false;
 
-  $: isFollowing =
-    ($page.data.user.following
-      .map((user: MinifiedUser) => user.username)
-      .includes(user.username) ||
-      $newFollows.includes(user.username)) &&
-    !$newUnfollows.includes(user.username);
+  $: {
+    if ($page.data.user) {
+      isFollowing =
+        ($page.data.user.following
+          .map((user: MinifiedUser) => user.username)
+          .includes(user.username) ||
+          $newFollows.includes(user.username)) &&
+        !$newUnfollows.includes(user.username);
+    }
+  }
 
   async function toggleFollow() {
-    isFollowing = !isFollowing;
-
-    if (isFollowing) {
-      newFollows.update((state) => [...state, user.username]);
-      newUnfollows.update((state) => state.filter((u) => u !== user.username));
-      await axios.post(`/api/users/${user.username}/follow`);
+    if (!$page.data.user) {
+      router.push("/signin?next=/typer");
     } else {
-      newUnfollows.update((state) => [...state, user.username]);
-      newFollows.update((state) => state.filter((u) => u !== user.username));
-      await axios.post(`/api/users/${user.username}/unfollow`);
+      isFollowing = !isFollowing;
+
+      if (isFollowing) {
+        newFollows.update((state) => [...state, user.username]);
+        newUnfollows.update((state) =>
+          state.filter((u) => u !== user.username)
+        );
+        await axios.post(`/api/users/${user.username}/follow`);
+      } else {
+        newUnfollows.update((state) => [...state, user.username]);
+        newFollows.update((state) => state.filter((u) => u !== user.username));
+        await axios.post(`/api/users/${user.username}/unfollow`);
+      }
     }
   }
 </script>
