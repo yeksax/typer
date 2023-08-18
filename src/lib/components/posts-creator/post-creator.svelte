@@ -116,13 +116,13 @@
       src={$page.data.user.avatar}
       alt="" />
 
-    <div class="flex flex-col gap-2 w-full">
+    <div class="flex flex-col gap-2 w-full truncate">
       <div class="flex justify-between items-center">
-        <div class="flex flex-col justify-between">
-          <h3 class="font-semibold">
+        <div class="flex flex-col justify-between truncate">
+          <h3 class="font-semibold truncate">
             {$page.data.user.displayName ?? $page.data.user.name}
           </h3>
-          <span class="text-xs">
+          <span class="text-xs truncate">
             {$page.data.user.name}#{$page.data.user.tag}
           </span>
         </div>

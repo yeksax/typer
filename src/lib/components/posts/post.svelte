@@ -1,11 +1,10 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
+  import { router } from "$lib/utils/router";
   import { cubicInOut } from "svelte/easing";
   import { fly } from "svelte/transition";
   import type { _Post } from "../../types";
-  import PostStats from "./post-stats.svelte";
-  import { router } from "$lib/utils/router";
   import InformationCard from "../user/information-card.svelte";
+  import PostStats from "./post-stats.svelte";
 
   export let post: _Post;
   export let showStats = true;
@@ -26,17 +25,17 @@
   on:click={() => router.push(`/${post.author.username}/type/${post.id}`)}
   class="post rounded-lg cursor-pointer border-2 bg-white dark:bg-zinc-850 dark:hover:bg-zinc-800 transition-all border-black dark:border-zinc-950 flex flex-col gap-4 px-6 py-3 text-sm">
   <InformationCard user={post.author}>
-    <div class="flex gap-4">
+    <div class="flex gap-4 ">
       <img
         class="rounded-md w-9 aspect-square"
         src={post.author.avatar}
         alt="foto de {post.author.name}" />
 
-      <div class="flex flex-col justify-between">
-        <h3 class="font-semibold">
+      <div class="flex flex-col justify-between truncate">
+        <h3 class="font-semibold truncate">
           {post.author.displayName ?? post.author.name}
         </h3>
-        <span class="text-xs">
+        <span class="text-xs truncate">
           {post.author.name}#{post.author.tag}
         </span>
       </div>

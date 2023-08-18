@@ -9,6 +9,16 @@ export const load: LayoutServerLoad = async (event) => {
       email: String(session?.user?.email),
     },
     include: {
+      followers: {
+        select: {
+          username: true,
+        },
+      },
+      following: {
+        select: {
+          username: true,
+        },
+      },
       _count: {
         select: {
           notifications: true,

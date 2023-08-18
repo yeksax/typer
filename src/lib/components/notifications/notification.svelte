@@ -8,6 +8,7 @@
   } from "svelte-feather-icons";
   import InformationCard from "../user/information-card.svelte";
   import { paramReplacing } from "$lib/utils/string";
+  import { router } from "$lib/utils/router";
 
   export let notification: _Notification;
 
@@ -44,8 +45,10 @@
   }
 </script>
 
-<a
-  href={notification.redirect}
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<div
+  on:click={() => router.push(`/${notification.redirect}`)}
   class="flex flex-col gap-1 text-sm px-6 py-2 border-black dark:border-zinc-950 rounded-md border-2">
   <div class="h-7 mb-2">
     {#each actors as actor, i (actor.username)}
@@ -68,13 +71,15 @@
         {actors.at(-1)?.name}
       </span>
     </InformationCard>
-    {paramReplacing(notification.title, [actorsString])}
+    <span>
+      {paramReplacing(notification.title, [actorsString])}
+    </span>
   </h3>
 
   <div class="text-xs opacity-75">
     {notification.text}
   </div>
-</a>
+</div>
 
 <style lang="scss">
   .slide-left {

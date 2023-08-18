@@ -14,3 +14,6 @@ export const creatorState = writable({
 export const lastPage = writable("/");
 export const navigationHistory = writable<string[]>([]);
 export const theme = writable<Preferences["theme"]>("SYSTEM_DEFAULT");
+
+export const newFollows = writable<string[]>([]);
+export const newUnfollows = writable<string[]>([]);
