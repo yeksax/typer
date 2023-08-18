@@ -17,7 +17,6 @@ import { sequence } from "@sveltejs/kit/hooks";
 import { PUBLIC_PUSHER_APP_KEY } from "$env/static/public";
 
 const PROTECTED_ROUTES = [
-  "/dashboard/**",
   "/profile",
   "/notifications",
   "/settings/**",

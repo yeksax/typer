@@ -5,6 +5,7 @@
   import { notifications, unreadNotifications } from "$lib/stores";
   import type { _Notification } from "$lib/types";
   import { infiniteQuery } from "$lib/utils/reactQuery";
+  import axios from "axios";
   import { LoaderIcon } from "svelte-feather-icons";
 
   const query = infiniteQuery<_Notification>({
@@ -27,18 +28,21 @@
         ...realtimeNotifications,
         { _action_type: "new", ...data },
       ];
+      axios.post("/api/user/notifications/read");
     })
     .bind("additive_update-notification", (data: _Notification) => {
       realtimeNotifications = [
         ...realtimeNotifications,
         { _action_type: "update", ...data },
       ];
+      axios.post("/api/user/notifications/read");
     })
     .bind("destructive_update-notification", (data: _Notification) => {
       realtimeNotifications = [
         ...realtimeNotifications,
         { _action_type: "update", ...data },
       ];
+      axios.post("/api/user/notifications/read");
     })
     .bind("delete-notification", (data: _Notification) => {
       realtimeNotifications = [
@@ -79,7 +83,8 @@
     }
 
     queriedNotifications = queriedNotifications.sort(
-      (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+      (a, b) =>
+        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
     );
 
     notifications.set(queriedNotifications);
