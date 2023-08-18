@@ -16,7 +16,7 @@ export async function POST({ params, locals }: RequestEvent) {
       id: parseInt(id),
     },
     data: {
-      likedBy: {
+      likes: {
         disconnect: {
           email: session.user?.email as string,
         },

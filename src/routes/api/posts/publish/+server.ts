@@ -4,7 +4,7 @@ import type { _Post } from "$lib/types";
 import type { Attachment } from "@prisma/client";
 import { createClient } from "@supabase/supabase-js";
 import { error, json } from "@sveltejs/kit";
-import { array, instance, object, optional, safeParse, string } from "valibot"; // 0.76 kB
+import { array, instance, object, safeParse, string } from "valibot"; // 0.76 kB
 import type { RequestEvent } from "../$types";
 
 const PostSchema = object({
@@ -102,7 +102,7 @@ export async function POST({ request, locals }: RequestEvent) {
           attachments: true,
         },
       },
-      likedBy: true,
+      likes: true,
       author: {
         select: {
           displayName: true,
@@ -124,7 +124,7 @@ export async function POST({ request, locals }: RequestEvent) {
       _count: {
         select: {
           replies: true,
-          likedBy: true,
+          likes: true,
           reposts: true,
         },
       },

@@ -48,7 +48,7 @@ export async function getPost({ session, id }: PostFetchSingleOptions) {
           _count: {
             select: {
               replies: true,
-              likedBy: true,
+              likes: true,
               reposts: true,
             },
           },
@@ -76,7 +76,7 @@ export async function getPost({ session, id }: PostFetchSingleOptions) {
           },
         },
       },
-      likedBy: {
+      likes: {
         select: {
           id: true,
         },
@@ -102,7 +102,7 @@ export async function getPost({ session, id }: PostFetchSingleOptions) {
       _count: {
         select: {
           replies: true,
-          likedBy: true,
+          likes: true,
           reposts: true,
         },
       },
@@ -150,7 +150,7 @@ export async function getPosts({
           _count: {
             select: {
               replies: true,
-              likedBy: true,
+              likes: true,
               reposts: true,
             },
           },
@@ -178,7 +178,7 @@ export async function getPosts({
           },
         },
       },
-      likedBy: {
+      likes: {
         select: {
           id: true,
         },
@@ -204,7 +204,7 @@ export async function getPosts({
       _count: {
         select: {
           replies: true,
-          likedBy: true,
+          likes: true,
           reposts: true,
         },
       },

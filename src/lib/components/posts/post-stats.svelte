@@ -15,14 +15,14 @@
   };
 
   export let post: _Post;
-  let isLiked = post.likedBy.length > 0;
+  let isLiked = post.likes.length > 0;
 
   async function toggleLike() {
     if (isLiked) {
-      post._count.likedBy = post._count.likedBy - 1;
+      post._count.likes = post._count.likes - 1;
       await axios.post(`/api/posts/${post.id}/unlike`);
     } else {
-      post._count.likedBy = post._count.likedBy + 1;
+      post._count.likes = post._count.likes + 1;
       await axios.post(`/api/posts/${post.id}/like`);
     }
 
@@ -43,7 +43,7 @@
     <RepeatIcon slot="icon" {...iconProps} />
   </PostStat>
 
-  <PostStat value={post._count.likedBy} clickAction={toggleLike}>
+  <PostStat value={post._count.likes} clickAction={toggleLike}>
     <HeartIcon
       slot="icon"
       {...iconProps}

@@ -1,4 +1,32 @@
-import type { File, Post } from "@prisma/client";
+import type { File, Notification, Post } from "@prisma/client";
+
+interface MinifiedUser {
+  _count: {
+    following: number;
+    followers: number;
+  };
+  displayName: string | null;
+  username: string;
+  avatar: string;
+  banner: string;
+  biography: string;
+  name: string;
+  tag: string;
+}
+
+interface MinifiedPost {
+  content: string;
+  createdAt: Date;
+  author: MinifiedUser;
+
+  _count: {
+    like: number;
+  }
+}
+
+interface _Notification extends Notification {
+  notificationActors: MinifiedUser[]
+}
 
 interface _Post extends Post {
   replies:
@@ -12,7 +40,7 @@ interface _Post extends Post {
     attachments: File[];
     _count: {
       replies: number;
-      likedBy: number;
+      likes: number;
     };
   })[];
   repost:
@@ -20,26 +48,14 @@ interface _Post extends Post {
         attachments: File[];
       })
     | null;
-  author: {
-    _count: {
-      following: number;
-      followers: number;
-    };
-    displayName: string | null;
-    username: string;
-    avatar: string;
-    banner: string;
-    biography: string;
-    name: string;
-    tag: string;
-  };
+  author: MinifiedUser;
   attachments: File[];
-  likedBy: {
+  likes: {
     id: string;
   }[];
   _count: {
     replies: number;
-    likedBy: number;
+    likes: number;
     reposts: number;
   };
 }

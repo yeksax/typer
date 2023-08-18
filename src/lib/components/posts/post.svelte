@@ -5,6 +5,7 @@
   import type { _Post } from "../../types";
   import PostStats from "./post-stats.svelte";
   import { router } from "$lib/utils/router";
+  import InformationCard from "../user/information-card.svelte";
 
   export let post: _Post;
   export let showStats = true;
@@ -23,29 +24,33 @@
 <div
   in:fly={{ y: -5, opacity: 0, duration: 500, easing: cubicInOut }}
   on:click={() => router.push(`/${post.author.username}/type/${post.id}`)}
-  class="post rounded-lg cursor-pointer border-2 bg-white dark:bg-zinc-850 dark:hover:bg-zinc-800 transition-all border-black dark:border-zinc-950 flex gap-4 px-6 py-3 text-sm">
-  <div class="flex flex-col items-center">
-    <img class="rounded-md w-9 aspect-square" src={post.author.avatar} alt="" />
+  class="post rounded-lg cursor-pointer border-2 bg-white dark:bg-zinc-850 dark:hover:bg-zinc-800 transition-all border-black dark:border-zinc-950 flex flex-col gap-4 px-6 py-3 text-sm">
+  <InformationCard user={post.author}>
+    <div class="flex gap-4">
+      <img
+        class="rounded-md w-9 aspect-square"
+        src={post.author.avatar}
+        alt="foto de {post.author.name}" />
 
-    {#if post.replies.length > 0}
-      ...
-    {/if}
-  </div>
-
-  <div class="flex flex-col gap-2 w-full">
-    <div class="flex flex-col justify-between">
-      <h3 class="font-semibold">
-        {post.author.displayName ?? post.author.name}
-      </h3>
-      <span class="text-xs">
-        {post.author.name}#{post.author.tag}
-      </span>
+      <div class="flex flex-col justify-between">
+        <h3 class="font-semibold">
+          {post.author.displayName ?? post.author.name}
+        </h3>
+        <span class="text-xs">
+          {post.author.name}#{post.author.tag}
+        </span>
+      </div>
     </div>
+  </InformationCard>
 
-    <pre use:preventLink>{post.content}</pre>
+  <div class="flex gap-4">
+    <span class="w-9" />
+    <div class="flex flex-col gap-2 flex-1">
+      <pre use:preventLink>{post.content}</pre>
 
-    {#if showStats}
-      <PostStats {post} />
-    {/if}
+      {#if showStats}
+        <PostStats {post} />
+      {/if}
+    </div>
   </div>
 </div>

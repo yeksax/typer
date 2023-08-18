@@ -78,14 +78,11 @@ model User {
   posts         Post[]
   notifications Notification[]
 
-  sentDMRequests DirectMessageRequest[] @relation("SentDMRequests")
-  dmRequests     DirectMessageRequest[] @relation("DMRequests")
-
   likedPosts Post[] @relation("LikedBy")
 
-  following User[]               @relation("Friends")
-  followers User[]               @relation("Friends")
-  actions   NotificationActors[]
+  following User[]         @relation("Friends")
+  followers User[]         @relation("Friends")
+  actions   Notification[] @relation("NotificationActor")
 
   messagesRead    Message[] @relation("readMessages")
   messagesDeleted Message[] @relation("deletedMessage")
@@ -95,17 +92,6 @@ model User {
 
   @@index([email])
   @@index([pinnedPostId])
-}
-
-model DirectMessageRequest {
-  id         String @id @default(cuid())
-  origin     User   @relation("SentDMRequests", fields: [originId], references: [id])
-  originId   String
-  receiver   User   @relation("DMRequests", fields: [receiverId], references: [id])
-  receiverId String
-
-  @@index([originId])
-  @@index([receiverId])
 }
 
 enum ChatType {
@@ -134,10 +120,10 @@ model Chat {
 }
 
 model EditedMessage {
-  id        String   @id @default(cuid())
+  id        String       @id @default(cuid())
   content   String
   files     Attachment[]
-  message   Message? @relation(fields: [messageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  message   Message?     @relation(fields: [messageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   messageId String?
 
   @@index([messageId])
@@ -186,7 +172,7 @@ model Attachment {
   @@index([messageId])
   @@index([postId])
   @@index([editedMessageId])
-	@@map("File")
+  @@map("File")
 }
 
 model Post {
@@ -204,12 +190,12 @@ model Post {
   inThread Post[] @relation("Thread")
 
   attachments Attachment[]
-  pinnedBy    User[] @relation("PinnedPost")
+  pinnedBy    User[]       @relation("PinnedPost")
 
-  likedBy User[] @relation("LikedBy")
+  likes User[] @relation("LikedBy")
 
-  repost Post? @relation("Reposts", fields: [repostId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  replied  Post? @relation("Replies", fields: [repliedId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  repost  Post? @relation("Reposts", fields: [repostId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replied Post? @relation("Replies", fields: [repliedId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   userId    String
   repostId  Int?
@@ -219,31 +205,22 @@ model Post {
   @@index([repliedId])
 }
 
-model NotificationActors {
-  id    String @id @default(cuid())
-  users User[]
-
-  notification   Notification @relation(fields: [notificationId], references: [id])
-  notificationId String       @unique
-
-  @@index([notificationId])
-}
-
 model Notification {
   id        String             @id @default(cuid())
   createdAt DateTime           @default(now())
   updatedAt DateTime           @updatedAt
   action    NotificationAction @default(GENERIC)
 
-  receiverId String
-  icon       String?
-  title      String
-  text       String
-  isRead     Boolean @default(false)
-  redirect   String
+  notificationReceiver User   @relation(fields: [receiverId], references: [id])
+  notificationActors   User[] @relation("NotificationActor")
 
-  notificationReceiver User                @relation(fields: [receiverId], references: [id])
-  notificationActors   NotificationActors?
+  icon     String?
+  title    String
+  text     String
+  isRead   Boolean @default(false)
+  redirect String
+
+  receiverId String
 
   @@index([receiverId])
 }
@@ -252,6 +229,7 @@ enum NotificationAction {
   REPLY
   LIKE
   FOLLOW
+  REPORT
   GENERIC
 }
 
@@ -278,8 +256,6 @@ enum AnonymousPermissions {
   NOT_ALLOWED
   FOLLOWING_ONLY
   ALLOWED
-
-  @@map("DMRequests")
 }
 
 enum Theme {

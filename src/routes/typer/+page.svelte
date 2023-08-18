@@ -4,34 +4,19 @@
   import { createInfiniteQuery } from "@tanstack/svelte-query";
   import { LoaderIcon } from "svelte-feather-icons";
   import type { _Post } from "$lib/types";
-  import type { PageData } from "../(test)/typer/$types";
+  import {infiniteQuery} from "$lib/utils/reactQuery";
   import { pusherClient } from "$lib/pusher";
+  import type { PageData } from "./$types";
 
   export let data: PageData;
 
   let newPosts: _Post[] = [];
 
-  const fetchPosts = async ({
-    pageParam = 1,
-  }): Promise<{ next?: string; data: _Post[] }> =>
-    await fetch(`/api/posts?page=${pageParam}&per_page=20`).then((r) =>
-      r.json()
-    );
-
-  const query = createInfiniteQuery({
-    queryKey: ["posts"],
-    queryFn: fetchPosts,
-    getNextPageParam: (lastPage: any) => {
-      if (lastPage.next) {
-        const nextUrl = new URLSearchParams(new URL(lastPage.next).search);
-        const nextCursor = nextUrl.get("page");
-        if (nextCursor) {
-          return +nextCursor;
-        }
-      }
-      return undefined;
-    },
-  });
+  const query = infiniteQuery<_Post>({
+    queryKeys: ["posts"],
+    queryURL: "/api/posts",
+    limit: 20
+  })
 
   pusherClient
     .subscribe("typer")

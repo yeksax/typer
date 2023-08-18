@@ -4,7 +4,7 @@
 </script>
 
 <a
-  class="flex items-center gap-4 hover:font-medium transition-all duration-100 hover:translate-x-0.5 {text
+  class="flex items-center gap-4 hover:font-medium transition-all duration-100 lg:hover:translate-x-0.5 {text
     ? 'w-full'
     : ''}"
   {href}>

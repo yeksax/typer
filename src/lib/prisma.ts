@@ -8,6 +8,10 @@ export const prisma = new PrismaClient({
 export const adapter = PrismaAdapter(prisma);
 
 adapter.createUser = async ({ email, name, image }) => {
+  const urlFriendly = (str: string) => {
+    return str.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  };
+
   const tag = Math.floor(Math.random() * 9999)
     .toString()
     .padStart(4, "0");
@@ -18,7 +22,7 @@ adapter.createUser = async ({ email, name, image }) => {
       name: name || "typist",
       tag,
       avatar: image || "/user.png",
-      username: `${name || "typist"}_${tag}`,
+      username: `${urlFriendly(name || "typist")}_${tag}`,
       preferences: {
         create: {},
       },
