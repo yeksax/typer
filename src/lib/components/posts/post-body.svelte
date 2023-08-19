@@ -4,7 +4,7 @@
     hardAccidentalClickPrevention,
     softAccidentalClickPrevention,
   } from "$lib/utils/hooks/prevent-accidental-click";
-  const howLongIsTooLong = 200;
+  const howLongIsTooLong = 150;
 
   export let post: _Post;
 

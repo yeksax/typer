@@ -1,9 +1,16 @@
+import { dev } from "$app/environment";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 
-export const prisma = new PrismaClient({
-  log: ["error", "info", "warn"],
-});
+const globalForPrisma = global as unknown as { prisma: PrismaClient };
+
+export const prisma =
+  globalForPrisma.prisma ||
+  new PrismaClient({
+    log: ["query"],
+  });
+
+if (dev) globalForPrisma.prisma = prisma;
 
 export const adapter = PrismaAdapter(prisma);
 
