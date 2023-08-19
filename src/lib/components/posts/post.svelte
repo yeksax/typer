@@ -15,7 +15,7 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
   in:fly={{ y: -5, opacity: 0, duration: 500, easing: cubicInOut }}
-  on:click={() => router.push(`/${post.author.username}/type/${post.id}`)}
+  on:pointerup={() => router.push(`/${post.author.username}/type/${post.id}`)}
   class="post rounded-lg cursor-pointer border-2 bg-white dark:bg-zinc-850 dark:hover:bg-zinc-800 transition-all border-black dark:border-zinc-950 flex flex-col gap-4 px-6 py-3 text-sm">
   <InformationCard user={post.author}>
     <div class="flex gap-4">
