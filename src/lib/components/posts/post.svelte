@@ -5,17 +5,10 @@
   import type { _Post } from "../../types";
   import InformationCard from "../user/information-card.svelte";
   import PostStats from "./post-stats.svelte";
+  import PostBody from "./post-body.svelte";
 
   export let post: _Post;
   export let showStats = true;
-
-  function preventLink(node: HTMLElement) {
-    node.onclick = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-    };
-  }
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -25,7 +18,7 @@
   on:click={() => router.push(`/${post.author.username}/type/${post.id}`)}
   class="post rounded-lg cursor-pointer border-2 bg-white dark:bg-zinc-850 dark:hover:bg-zinc-800 transition-all border-black dark:border-zinc-950 flex flex-col gap-4 px-6 py-3 text-sm">
   <InformationCard user={post.author}>
-    <div class="flex gap-4 ">
+    <div class="flex gap-4">
       <img
         class="rounded-md w-9 aspect-square"
         src={post.author.avatar}
@@ -45,7 +38,7 @@
   <div class="flex gap-4">
     <span class="w-9" />
     <div class="flex flex-col gap-2 flex-1">
-      <pre use:preventLink>{post.content}</pre>
+      <PostBody {post} />
 
       {#if showStats}
         <PostStats {post} />

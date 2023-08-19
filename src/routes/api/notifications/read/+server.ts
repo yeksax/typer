@@ -2,6 +2,7 @@ import { prisma } from "$lib/prisma.js";
 import { error, json } from "@sveltejs/kit";
 
 export async function POST({ locals }) {
+  
   const session = await locals.getSession();
 
   if (!session) {

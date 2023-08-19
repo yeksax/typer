@@ -1,5 +1,5 @@
 <script lang="ts">
-  import PostsCreator from "$lib/components/posts-creator/post-creator.svelte";
+  import PostsCreator from "$lib/components/posts/creator/post-creator.svelte";
   import Post from "$lib/components/posts/post.svelte";
   import { createInfiniteQuery } from "@tanstack/svelte-query";
   import { LoaderIcon } from "svelte-feather-icons";

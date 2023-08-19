@@ -4,10 +4,10 @@
   import { longpress } from "$lib/utils/hooks/long-press";
   import axios, { AxiosError } from "axios";
   import { Minimize2Icon } from "svelte-feather-icons";
-  import Draggable from "../draggable.svelte";
+  import Draggable from "$lib/components/draggable.svelte";
   import CreatorContent from "./creator-content.svelte";
   import CreatorFooter from "./creator-footer.svelte";
-  import LoadingBar from "../loading-bar.svelte";
+  import LoadingBar from "$lib/components/loading-bar.svelte";
 
   let form: HTMLFormElement;
   $: locked = $creatorState.locked;

@@ -15,7 +15,7 @@ export async function POST({ params, locals }) {
     where: {
       email: session.user!.email as string,
     },
-  })
+  });
 
   if (!user) {
     throw error(404, "User not found");

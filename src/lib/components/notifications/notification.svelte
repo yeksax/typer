@@ -79,7 +79,7 @@
     </span>
 
     {#if notification.text}
-      <div class="text-xs opacity-95">
+      <div class="text-xs opacity-95 line-clamp-2">
         {notification.text}
       </div>
     {/if}
