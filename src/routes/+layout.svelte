@@ -6,7 +6,7 @@
   import Navigation from "$lib/components/navigation/navigation.svelte";
   import SidePanel from "$lib/components/side-panel/side-panel.svelte";
   import "$lib/globals.scss";
-  import { webVitals } from "$lib/vitals";
+  import { webVitals } from "$lib/web-vitals";
   import { creatorState, theme } from "$lib/stores";
   import { pageTitle } from "$lib/utils/metadata";
   import { router } from "$lib/utils/router";
