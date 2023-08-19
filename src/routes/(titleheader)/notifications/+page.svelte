@@ -4,6 +4,7 @@
   import { pusherClient } from "$lib/pusher";
   import { notifications, unreadNotifications } from "$lib/stores";
   import type { _Notification } from "$lib/types";
+  import { readAll } from "$lib/utils/notifications";
   import { infiniteQuery } from "$lib/utils/reactQuery";
   import axios from "axios";
   import { LoaderIcon } from "svelte-feather-icons";
@@ -23,26 +24,26 @@
 
   pusherClient
     .subscribe(`user__${$page.data.user.id}`)
-    .bind("new-notification", (data: _Notification) => {
+    .bind("new-notification", async (data: _Notification) => {
       realtimeNotifications = [
         ...realtimeNotifications,
         { _action_type: "new", ...data },
       ];
-      axios.post("/api/user/notifications/read");
+      readAll();
     })
-    .bind("additive_update-notification", (data: _Notification) => {
+    .bind("additive_update-notification", async (data: _Notification) => {
       realtimeNotifications = [
         ...realtimeNotifications,
         { _action_type: "update", ...data },
       ];
-      axios.post("/api/user/notifications/read");
+      readAll();
     })
-    .bind("destructive_update-notification", (data: _Notification) => {
+    .bind("destructive_update-notification", async (data: _Notification) => {
       realtimeNotifications = [
         ...realtimeNotifications,
         { _action_type: "update", ...data },
       ];
-      axios.post("/api/user/notifications/read");
+      readAll();
     })
     .bind("delete-notification", (data: _Notification) => {
       realtimeNotifications = [
