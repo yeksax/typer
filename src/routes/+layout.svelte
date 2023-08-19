@@ -6,6 +6,7 @@
   import Navigation from "$lib/components/navigation/navigation.svelte";
   import SidePanel from "$lib/components/side-panel/side-panel.svelte";
   import "$lib/globals.scss";
+  import { webVitals } from "$lib/vitals";
   import { creatorState, theme } from "$lib/stores";
   import { pageTitle } from "$lib/utils/metadata";
   import { router } from "$lib/utils/router";
@@ -17,6 +18,15 @@
   import PostCreator from "$lib/components/posts/creator/post-creator.svelte";
 
   inject({ mode: dev ? "development" : "production" });
+  let analyticsId = import.meta.env.VERCEL_ANALYTICS_ID;
+
+  $: if (browser && analyticsId) {
+    webVitals({
+      path: $page.url.pathname,
+      params: $page.params,
+      analyticsId,
+    });
+  }
 
   $theme = $page.data.theme ?? "SYSTEM_DEFAULT";
 
