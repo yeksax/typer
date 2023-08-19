@@ -1,9 +1,9 @@
 <script lang="ts">
   import type { _Post } from "$lib/types";
   import {
-    hardLinkPrevention,
-    softLinkPrevention,
-  } from "$lib/utils/hooks/prevent-link-click";
+    hardAccidentalClickPrevention,
+    softAccidentalClickPrevention,
+  } from "$lib/utils/hooks/prevent-accidental-click";
   const howLongIsTooLong = 200;
 
   export let post: _Post;
@@ -16,11 +16,11 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class="">
-  <pre class="inline" use:softLinkPrevention>{expanded
+  <pre class="inline" use:softAccidentalClickPrevention>{expanded
       ? post.content
       : short_content}</pre>
   {#if hasContentSwitcher}
-    <div class="inline" use:hardLinkPrevention>
+    <div class="inline" use:hardAccidentalClickPrevention>
       <span
         on:click={() => (expanded = !expanded)}
         class="cursor-pointer {expanded

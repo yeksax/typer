@@ -1,4 +1,4 @@
-export function softLinkPrevention(node: HTMLElement) {
+export function softAccidentalClickPrevention(node: HTMLElement) {
   node.onpointerup = (e) => {
     if (document.getSelection()?.toString()) {
       e.preventDefault();
@@ -8,7 +8,7 @@ export function softLinkPrevention(node: HTMLElement) {
   };
 }
 
-export function hardLinkPrevention(node: HTMLElement) {
+export function hardAccidentalClickPrevention(node: HTMLElement) {
   node.onpointerup = (e) => {
     e.preventDefault();
     e.stopPropagation();

@@ -95,23 +95,16 @@
   }
 
   function dragStartHandler(e: PointerEvent) {
-    const preventFromTheseTags = [
-      "INPUT",
-      "TEXTAREA",
-      "SELECT",
-      "BUTTON",
-      "ANCHOR",
-    ];
-
-    if (preventFromTheseTags.includes((e.target as HTMLElement).tagName))
-      return;
-
     startMovement();
     onDragStart(e);
   }
+
+  function accidentalInitHandler(e: MouseEvent) {
+    endMovement();
+  }
 </script>
 
-<svelte:document
+<svelte:window
   on:pointermove={(e) => {
     movementHandler(e);
     onDragMove(e);
@@ -119,12 +112,13 @@
   on:pointerup={(e) => {
     endMovement();
     onDragEnd(e);
-  }} />
+    moving = false;
+  }}
+  on:click={accidentalInitHandler} />
 
 <div
   bind:this={draggable}
-  use:longpress
-  on:longpress={dragStartHandler}
+  on:pointerdown={dragStartHandler}
   data-longpressms={minimumHoldTime}
   class={twMerge("z-40 bg-white dark:bg-zinc-850", $$restProps.class)}
   style="transform: {translate}">

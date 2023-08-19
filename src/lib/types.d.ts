@@ -41,6 +41,7 @@ interface _Post extends Post {
     _count: {
       replies: number;
       likes: number;
+      reposts: number;
     };
   })[];
   repost:

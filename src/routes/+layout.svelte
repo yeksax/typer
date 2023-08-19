@@ -6,7 +6,7 @@
   import Navigation from "$lib/components/navigation/navigation.svelte";
   import SidePanel from "$lib/components/side-panel/side-panel.svelte";
   import "$lib/globals.scss";
-  import { theme } from "$lib/stores";
+  import { creatorState, theme } from "$lib/stores";
   import { pageTitle } from "$lib/utils/metadata";
   import { router } from "$lib/utils/router";
   import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
@@ -14,6 +14,7 @@
 
   import { dev } from "$app/environment";
   import { inject } from "@vercel/analytics";
+  import PostCreator from "$lib/components/posts/creator/post-creator.svelte";
 
   inject({ mode: dev ? "development" : "production" });
 
@@ -52,6 +53,10 @@
     if (type === "goto") return;
     router.register(to?.url.pathname ?? "/");
   });
+
+  $: creatorAllowed = Object.keys($creatorState.pathOptions).includes(
+    $page.route.id as string
+  );
 </script>
 
 <svelte:head>
@@ -67,8 +72,12 @@
         <Navigation />
         <main
           class="lg:w-4/12 lg:min-w-[30rem] max-lg:w-11/12 mx-auto pt-8 relative">
+          {#if $page.data.session && creatorAllowed}
+            <PostCreator />
+          {/if}
           <slot />
         </main>
+
         <SidePanel />
       </div>
     </div>

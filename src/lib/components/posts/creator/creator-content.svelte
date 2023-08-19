@@ -5,19 +5,17 @@
 
   let content: HTMLTextAreaElement;
 
+  $: {
+    if (!$creatorState.locked) {
+      if (content) content.focus();
+    }
+  }
+
   function globalShortcutHandler(e: KeyboardEvent) {
     const { ctrlKey } = e;
     const key = e.key.toLowerCase();
 
     const target = e.target as HTMLElement;
-
-    if (!["textarea", "input"].includes(target.tagName.toLowerCase())) {
-      if (key === "n") {
-        setTimeout(() => {
-          content.focus();
-        }, 100);
-      }
-    }
   }
 
   function shortcutHandler(e: KeyboardEvent) {

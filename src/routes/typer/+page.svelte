@@ -1,11 +1,10 @@
 <script lang="ts">
   import PostsCreator from "$lib/components/posts/creator/post-creator.svelte";
   import Post from "$lib/components/posts/post.svelte";
-  import { createInfiniteQuery } from "@tanstack/svelte-query";
-  import { LoaderIcon } from "svelte-feather-icons";
-  import type { _Post } from "$lib/types";
-  import {infiniteQuery} from "$lib/utils/reactQuery";
   import { pusherClient } from "$lib/pusher";
+  import type { _Post } from "$lib/types";
+  import { infiniteQuery } from "$lib/utils/reactQuery";
+  import { LoaderIcon } from "svelte-feather-icons";
   import type { PageData } from "./$types";
 
   export let data: PageData;
@@ -33,9 +32,6 @@
 
 <svelte:body on:scroll={scrollHandler} />
 
-{#if data.session}
-  <PostsCreator />
-{/if}
 <div class="flex flex-col gap-2 pb-[100%]">
   {#if $query.isLoading}
     <span class="text-sm text-zinc-500">Todo: Skeletons</span>

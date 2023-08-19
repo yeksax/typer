@@ -1,16 +1,20 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import { creatorState } from "$lib/stores";
+  import { creatorState, newReplies } from "$lib/stores";
   import { longpress } from "$lib/utils/hooks/long-press";
   import axios, { AxiosError } from "axios";
-  import { Minimize2Icon } from "svelte-feather-icons";
+  import { Minimize2Icon, XIcon } from "svelte-feather-icons";
   import Draggable from "$lib/components/draggable.svelte";
   import CreatorContent from "./creator-content.svelte";
   import CreatorFooter from "./creator-footer.svelte";
   import LoadingBar from "$lib/components/loading-bar.svelte";
+  import CreatorHead from "./creator-head.svelte";
+  import InformationCard from "$lib/components/user/information-card.svelte";
 
   let form: HTMLFormElement;
-  $: locked = $creatorState.locked;
+  $: locked =
+    $creatorState.locked &&
+    !$creatorState.pathOptions[$page.route.id as string]?.floatingOnly;
 
   function animateDraggable() {
     form.animate(
@@ -74,8 +78,13 @@
     if (e) e.preventDefault();
     const data = new FormData(form);
 
-    axios
-      .post("/api/posts/publish", data)
+    const isReply = $creatorState.replying !== null;
+    const endpoint = isReply
+      ? `/api/posts/${$creatorState.replying}/reply`
+      : "/api/posts/publish";
+
+    const response = await axios
+      .post(endpoint, data)
       .then((response) => {
         form.reset();
         creatorState.update((state) => ({
@@ -89,6 +98,32 @@
           error: (e.response?.data as any).message,
         }));
       });
+
+    if (isReply) {
+      newReplies.update((state) => {
+        const actualKeys = Object.keys(state);
+        const valueAlreadyExists = actualKeys.includes(
+          $creatorState.replying!.toString()
+        );
+
+        if (valueAlreadyExists) {
+          const actualValue = state[$creatorState.replying!];
+          state[$creatorState.replying!] = actualValue + 1;
+        } else {
+          state[$creatorState.replying!] = 1;
+        }
+
+        return state;
+      });
+    }
+  }
+
+  function cancelReply() {
+    creatorState.update((state) => ({
+      ...state,
+      replying: null,
+      replyingTo: null,
+    }));
   }
 
   $: user_id = $page.data.user.id;
@@ -98,44 +133,49 @@
 
 <Draggable
   disabled={locked}
-  class="rounded-lg border-2 overflow-hidden border-black dark:border-zinc-950 {locked
+  class="rounded-lg border-2 border-black dark:border-zinc-950 {locked
     ? 'relative mb-4'
-    : 'lg:w-4/12 lg:min-w-[30rem] max-lg:w-11/12 fixed border-b-4 md:px-1 box-content'}">
+    : 'lg:w-4/12 lg:min-w-[30rem] max-lg:w-11/12 fixed border-b-4 md:px-1 -ml-1.5 box-content'}">
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <!-- svelte-ignore a11y-no-static-element-interactions -->
   <form
     bind:this={form}
     use:longpress
-    on:submit={publishHandler}
     on:longpress={longPressHandler}
-    class="flex gap-4 px-6 py-3 text-sm">
+    data-longpressms={500}
+    on:submit={publishHandler}
+    class="flex flex-col gap-1 px-6 py-3 text-sm">
     <LoadingBar channel={user_id} event="publish-progress" />
 
-    <img
-      class="rounded-md w-9 h-9 aspect-square"
-      src={$page.data.user.avatar}
-      alt="" />
+    <CreatorHead>
+      {#if !locked && !$creatorState.replying}
+        <button type="button" on:click={lockDraggable}>
+          <Minimize2Icon size="14" />
+        </button>
+      {:else if $creatorState.replying}
+        <button type="button" on:click={cancelReply}>
+          <XIcon size="14" />
+        </button>
+      {/if}
+    </CreatorHead>
 
-    <div class="flex flex-col gap-2 w-full truncate">
-      <div class="flex justify-between items-center">
-        <div class="flex flex-col justify-between truncate">
-          <h3 class="font-semibold truncate">
-            {$page.data.user.displayName ?? $page.data.user.name}
-          </h3>
-          <span class="text-xs truncate">
-            {$page.data.user.name}#{$page.data.user.tag}
+    <div class="flex gap-4">
+      <span class="w-9" />
+      <div class="flex flex-col flex-1 gap-2 truncate">
+        {#if $creatorState.replyingTo}
+          {@const user = $creatorState.replyingTo}
+          <span class="text-xs">
+            Respondendo
+            <InformationCard {user} class="inline">
+              <span class="text-blue-600 dark:text-blue-500"
+                >@{user.username}
+              </span>
+            </InformationCard>
           </span>
-        </div>
-
-        {#if !locked}
-          <button on:click={lockDraggable}>
-            <Minimize2Icon size="14" />
-          </button>
         {/if}
+        <CreatorContent />
+        <CreatorFooter />
       </div>
-
-      <CreatorContent />
-      <CreatorFooter />
     </div>
   </form>
 </Draggable>
