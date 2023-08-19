@@ -8,7 +8,7 @@
 
   export let post: _Post;
 
-  const short_content = post.content.substring(0, howLongIsTooLong);
+  const short_content = post.content.substring(0, howLongIsTooLong) + "...";
   const hasContentSwitcher = post.content.length > howLongIsTooLong;
   let expanded = post.content.length < howLongIsTooLong;
 </script>
@@ -26,7 +26,7 @@
         class="cursor-pointer {expanded
           ? 'text-zinc-600'
           : 'text-blue-600 dark:text-blue-500'}">
-        {expanded ? "Mostrar menos" : "Mostrar mais..."}
+        {expanded ? "Ver menos" : "Ver mais"}
       </span>
     </div>
   {/if}
