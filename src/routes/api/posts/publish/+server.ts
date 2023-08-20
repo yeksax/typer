@@ -1,18 +1,18 @@
 import { SUPABASE_SERVICE_ROLE, SUPABASE_URL } from "$env/static/private";
 import { prisma } from "$lib/prisma";
-import type { _Post } from "$lib/types";
-import type { Attachment } from "@prisma/client";
+import { Notifier } from "$lib/server/notifications.js";
+import type { FullPost } from "$lib/types";
+import type { Attachment, Post, User } from "@prisma/client";
 import { createClient } from "@supabase/supabase-js";
 import { error, json } from "@sveltejs/kit";
 import { array, instance, object, safeParse, string } from "valibot"; // 0.76 kB
-import type { RequestEvent } from "../$types";
 
 const PostSchema = object({
   content: string(),
   attachments: array(instance(File)),
 });
 
-export async function POST({ request, locals }: RequestEvent) {
+export async function POST({ request, locals }) {
   const session = await locals.getSession();
   const pusher = locals.pusher;
 
@@ -31,6 +31,29 @@ export async function POST({ request, locals }: RequestEvent) {
 
   if (!user) {
     throw error(404, "User not found");
+  }
+
+  const searchParams = new URL(request.url).searchParams;
+  const replying_to: string | null = searchParams.get("replying_to");
+  const quote_to: string | null = searchParams.get("quote_to");
+
+  let replyingTo: (Post & { author: User; thread: { id: number }[] }) | null =
+    null;
+
+  if (replying_to) {
+    replyingTo = await prisma.post.findFirst({
+      where: {
+        id: parseInt(replying_to),
+      },
+      include: {
+        author: true,
+        thread: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
   }
 
   await pusher.trigger(user.id, "publish-progress", 10);
@@ -54,7 +77,6 @@ export async function POST({ request, locals }: RequestEvent) {
       }
     }
   });
-
   data.attachments = (data.attachments as File[]).filter(
     (file) => file.size > 0
   );
@@ -77,9 +99,24 @@ export async function POST({ request, locals }: RequestEvent) {
 
   await pusher.trigger(user.id, "publish-progress", 40);
 
-  const post: _Post = await prisma.post.create({
+  const post: FullPost = await prisma.post.create({
     data: {
+      thread: replyingTo
+        ? {
+            connect: [
+              ...replyingTo.thread.map((post) => ({ id: post.id })),
+              { id: replyingTo.id },
+            ],
+          }
+        : {},
       content: parsed.data.content,
+      replied: replyingTo
+        ? {
+            connect: {
+              id: replyingTo.id,
+            },
+          }
+        : {},
       author: {
         connect: {
           email: session.user?.email as string,
@@ -87,6 +124,18 @@ export async function POST({ request, locals }: RequestEvent) {
       },
     },
     include: {
+      thread: {
+        include: {
+          attachments: true,
+          _count: {
+            select: {
+              replies: true,
+              likes: true,
+              reposts: true,
+            },
+          },
+        },
+      },
       replies: {
         take: 3,
         select: {
@@ -181,7 +230,24 @@ export async function POST({ request, locals }: RequestEvent) {
   await pusher.trigger(user.id, "publish-progress", 80);
 
   post.attachments = attachments;
-  await pusher.trigger("typer", "new-post", post);
+
+  if (replyingTo) {
+    await pusher.trigger(`post__${replyingTo.id}`, "new-reply", post);
+  } else {
+    await pusher.trigger(`typer`, "new-post", post);
+  }
+
+  if (replyingTo) {
+    const notifier = new Notifier(locals.pusher, { id: replyingTo.authorId });
+    notifier.handle({
+      text: post.content,
+      action: "REPLY",
+      title: `$_0 seu post`,
+      actors: [{ id: user.id as string }],
+      redirect: `${post.author.username}/posts/${post.id}`,
+      reference: `${post.repliedId}__reply__${post.id}`,
+    });
+  }
 
   await pusher.trigger(user.id, "publish-progress", 100);
   await pusher.trigger(user.id, "publish-progress", 0);

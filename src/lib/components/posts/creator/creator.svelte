@@ -84,12 +84,16 @@
     const data = new FormData(form);
 
     const isReply = $creator.replying !== null;
-    const endpoint = isReply
-      ? `/api/posts/${$creator.replying}/reply`
-      : "/api/posts/publish";
+    const endpoint = "/api/posts/publish";
+
+    const params = {
+      replying_to: $creator.replying,
+    };
 
     await axios
-      .post(endpoint, data)
+      .post(endpoint, data, {
+        params,
+      })
       .then((response) => {
         form.reset();
         creator.update((state) => ({
