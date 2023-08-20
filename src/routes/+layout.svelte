@@ -7,7 +7,7 @@
   import SidePanel from "$lib/components/side-panel/side-panel.svelte";
   import "$lib/globals.scss";
   import { webVitals } from "$lib/web-vitals";
-  import { creator, theme } from "$lib/stores";
+  import { creator, scrollPosition, theme } from "$lib/stores";
   import { pageTitle } from "$lib/utils/metadata";
   import { router } from "$lib/utils/router";
   import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
@@ -70,6 +70,34 @@
   $: creatorAllowed = Object.keys($creator.pathOptions).includes(
     $page.route.id as string
   );
+
+  function scrollHandler(e: Event) {
+    const target = e.target as HTMLElement;
+
+    if ($scrollPosition[$page.route.id as string] != undefined) {
+      scrollPosition.update((state) => {
+        state[$page.route.id as string] = target.scrollTop;
+        return state;
+      });
+    }
+  }
+
+  afterNavigate(() => {
+    if ($scrollPosition[$page.route.id as string]) {
+      document.body.scrollTo({
+        top: $scrollPosition[$page.route.id as string],
+      });
+    } else {
+      document.body.scrollTo({
+        top: 0,
+      });
+
+      scrollPosition.update((state) => ({
+        ...state,
+        [$page.route.id as string]: 0,
+      }));
+    }
+  });
 </script>
 
 <svelte:head>
@@ -77,6 +105,8 @@
     {pageTitle($page.data.title)}
   </title>
 </svelte:head>
+
+<svelte:body on:scroll={scrollHandler} />
 
 <QueryClientProvider client={queryClient}>
   <NotificationsHandler>

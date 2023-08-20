@@ -14,11 +14,7 @@ export const load = async ({ params, locals }) => {
   });
 
   return {
-    path: [
-      `<strong>${user?.displayName ?? user?.name}</strong> em ${
-        new Time(post!.createdAt).full
-      }`,
-    ],
+    title: `${user?.displayName ?? user?.name} em ${new Time(post!.createdAt).default}`,
     back: `/typer`,
     post,
   };

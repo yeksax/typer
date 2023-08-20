@@ -41,3 +41,5 @@ export const newReplies = writable<{ [key: number]: number }>({});
 
 export const unreadNotifications = writable<number>(0);
 export const notifications = writable<_Notification[]>([]);
+
+export const scrollPosition = writable<Record<string, number>>({})
