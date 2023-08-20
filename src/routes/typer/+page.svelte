@@ -1,6 +1,7 @@
 <script lang="ts">
   import Post from "$lib/components/posts/post.svelte";
   import { pusherClient } from "$lib/pusher";
+  import { creator } from "$lib/stores";
   import type { FullPost } from "$lib/types";
   import { infiniteQuery } from "$lib/utils/reactQuery";
   import { LoaderIcon } from "svelte-feather-icons";

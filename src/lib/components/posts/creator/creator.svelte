@@ -150,8 +150,6 @@
 {#if ($creator.pathOptions[route]?.floatingOnly && !$creator.locked) || !$creator.pathOptions[route]?.floatingOnly}
   <Draggable
     bind:draggable={creatorElement}
-    offsetX={$creator.x}
-    offsetY={$creator.y}
     disabled={locked}
     class="rounded-lg border-2 border-black dark:border-zinc-950 {locked
       ? 'relative mb-4'

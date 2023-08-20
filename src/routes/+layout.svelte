@@ -15,7 +15,7 @@
 
   import { dev } from "$app/environment";
   import { inject } from "@vercel/analytics";
-  import PostCreator from "$lib/components/posts/creator/post-creator.svelte";
+  import PostCreator from "$lib/components/posts/creator/creator.svelte";
 
   inject({ mode: dev ? "development" : "production" });
   let analyticsId = import.meta.env.VERCEL_ANALYTICS_ID;
@@ -68,7 +68,7 @@
   });
 
   $: creatorAllowed = Object.keys($creator.pathOptions).includes(
-    $page.url.pathname as string
+    $page.route.id as string
   );
 
   function scrollHandler(e: Event) {

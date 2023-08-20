@@ -63,9 +63,6 @@
       };
 
       if (dedicated) {
-        if (state.y === undefined || state.y === 0)
-          state.y = element.getBoundingClientRect().y;
-
         state.pathOptions[route] = {
           ...state.pathOptions[route],
           hidden: false,
