@@ -88,19 +88,25 @@
   function unlockCreator() {
     creator.update((v) => ({ ...v, locked: false }));
   }
+
+  $: creatorAllowed = Object.keys($creator.pathOptions).includes(
+    $page.url.pathname as string
+  );
 </script>
 
 <!-- mobile navigation -->
 <div
   class="fixed lg:hidden pr-2 bottom-4 left-1/2 -translate-x-1/2 w-11/12 z-40 flex items-center flex-col gap-2">
-  <Draggable
-    snapToOrigin
-    minimumHoldTime={150}
-    class="lg:hidden self-end rounded-lg border-2 border-b-4 border-r-4 border-black dark:border-zinc-950">
-    <button class="aspect-square p-2" on:click={unlockCreator}>
-      <EditIcon {size} />
-    </button>
-  </Draggable>
+  {#if session && creatorAllowed}
+    <Draggable
+      snapToOrigin
+      minimumHoldTime={150}
+      class="lg:hidden self-end rounded-lg border-2 border-b-4 border-r-4 border-black dark:border-zinc-950">
+      <button class="aspect-square p-2" on:click={unlockCreator}>
+        <EditIcon {size} />
+      </button>
+    </Draggable>
+  {/if}
 
   <Draggable
     snapToOrigin

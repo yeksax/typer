@@ -16,7 +16,7 @@
   export let offsetY = 0;
   export let offsetX = 0;
 
-  export let draggable: HTMLElement;
+  export let draggable: HTMLElement | undefined = undefined;
 
   let translateX = "0px";
   let translateY = "0px";
