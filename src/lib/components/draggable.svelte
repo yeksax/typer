@@ -1,6 +1,5 @@
 <script lang="ts">
   import { translateTransformer } from "$lib/utils/css";
-  import { longpress } from "$lib/utils/hooks/long-press";
   import { onMount } from "svelte";
   import { twMerge } from "tailwind-merge";
 
@@ -9,14 +8,17 @@
   export let snapToOrigin = false;
   export let disabled = false;
 
-  export let onDragStart: (e: PointerEvent) => void = () => {};
-  export let onDragMove: (e: PointerEvent) => void = () => {};
-  export let onDragEnd: (e: PointerEvent) => void = () => {};
+  export let onDragStart: (e: PointerEvent | TouchEvent) => void = () => {};
+  export let onDragMove: (e: PointerEvent | TouchEvent) => void = () => {};
+  export let onDragEnd: (e: PointerEvent | TouchEvent) => void = () => {};
 
   export let offsetY = 0;
   export let offsetX = 0;
 
   export let draggable: HTMLElement | undefined = undefined;
+
+  let rect: DOMRect | undefined;
+  let pointerDown = { x: 0, y: 0 };
 
   let translateX = "0px";
   let translateY = "0px";
@@ -26,17 +28,38 @@
   let moving = false;
   let ready = false;
 
-  function movementHandler(e: PointerEvent) {
+  function movementHandler(e: PointerEvent | TouchEvent) {
     if (!moving) return;
 
-    if (axis === "x") {
-      x += e.movementX;
-    } else if (axis === "y") {
-      y += e.movementY;
+    let dragX = 0;
+    let dragY = 0;
+    if (e instanceof PointerEvent) {
+      dragX = e.movementX;
+      dragY = e.movementY;
+
+      if (axis === "x") {
+        x += dragX;
+      } else if (axis === "y") {
+        y += dragY;
+      } else {
+        x += dragX;
+        y += dragY;
+      }
     } else {
-      x += e.movementX;
-      y += e.movementY;
+      dragX = e.touches[0].clientX;
+      dragY = e.touches[0].clientY;
+
+      if (axis === "x") {
+        x = dragX - rect!.left - pointerDown.x;
+      } else if (axis === "y") {
+        y = dragY - rect!.top - pointerDown.y;
+      } else {
+        x = dragX - rect!.left - pointerDown.x;
+        y = dragY - rect!.top - pointerDown.y;
+      }
     }
+
+    console.log(pointerDown);
   }
 
   function endMovement({ forceSnap }: { forceSnap?: boolean } = {}) {
@@ -63,7 +86,14 @@
     }
   }
 
-  function startMovement() {
+  function startMovement(e: PointerEvent) {
+    if (!draggable) return;
+
+    if (!rect) {
+      rect = draggable.getBoundingClientRect();
+      pointerDown = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    }
+
     if (!disabled) moving = true;
   }
 
@@ -76,7 +106,7 @@
   }
 
   onMount(() => {
-    const transform = draggable.computedStyleMap().get("transform") as any;
+    const transform = draggable!.computedStyleMap().get("transform") as any;
     const translate = transform[0];
 
     if (translate) {
@@ -104,17 +134,21 @@
   }
 
   function dragStartHandler(e: PointerEvent) {
-    startMovement();
+    startMovement(e);
     onDragStart(e);
   }
 
-  function accidentalInitHandler(e: MouseEvent) {
+  function accidentalInitHandler() {
     endMovement();
   }
 </script>
 
 <svelte:window
   on:pointermove={(e) => {
+    movementHandler(e);
+    onDragMove(e);
+  }}
+  on:touchmove={(e) => {
     movementHandler(e);
     onDragMove(e);
   }}
@@ -125,6 +159,7 @@
   }}
   on:click={accidentalInitHandler} />
 
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
   bind:this={draggable}
   on:pointerdown={dragStartHandler}
