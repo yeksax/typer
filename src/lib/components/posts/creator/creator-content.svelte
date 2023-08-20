@@ -1,21 +1,16 @@
 <script lang="ts">
   import { resize } from "$lib/utils/css";
-  import { creatorState } from "$lib/stores";
+  import { creator } from "$lib/stores";
   import { fade } from "svelte/transition";
 
   let content: HTMLTextAreaElement;
 
   $: {
-    if (!$creatorState.locked) {
-      if (content) content.focus();
+    if (!$creator.locked) {
+      setTimeout(() => {
+        if (content) content.focus();
+      }, 100);
     }
-  }
-
-  function globalShortcutHandler(e: KeyboardEvent) {
-    const { ctrlKey } = e;
-    const key = e.key.toLowerCase();
-
-    const target = e.target as HTMLElement;
   }
 
   function shortcutHandler(e: KeyboardEvent) {
@@ -26,8 +21,6 @@
     }
   }
 </script>
-
-<svelte:document on:keydown={globalShortcutHandler} />
 
 <input
   class="hidden"
@@ -40,10 +33,10 @@
 <textarea
   bind:this={content}
   on:keydown={shortcutHandler}
-  bind:value={$creatorState.content.body}
+  bind:value={$creator.content.body}
   on:input={(e) => {
     resize(e);
-    creatorState.update((state) => ({
+    creator.update((state) => ({
       ...state,
       error: null,
     }));
@@ -52,9 +45,13 @@
   data-max-lines="10"
   name="content"
   class="w-full resize-none outline-none"
-  placeholder="Eu acho que..." />
+  placeholder={$creator.replyingTo
+    ? `Ei, ${
+        $creator.replyingTo.author.displayName ??
+        $creator.replyingTo.author.name
+      }...`
+    : "Eu acho que..."} />
 
-{#if $creatorState.error}
-  <span in:fade out:fade class="text-xs text-red-400"
-    >{$creatorState.error}</span>
+{#if $creator.error}
+  <span in:fade out:fade class="text-xs text-red-400">{$creator.error}</span>
 {/if}

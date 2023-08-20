@@ -1,25 +1,21 @@
 <script lang="ts">
-  import PostsCreator from "$lib/components/posts/creator/post-creator.svelte";
   import Post from "$lib/components/posts/post.svelte";
   import { pusherClient } from "$lib/pusher";
-  import type { _Post } from "$lib/types";
+  import type { FullPost } from "$lib/types";
   import { infiniteQuery } from "$lib/utils/reactQuery";
   import { LoaderIcon } from "svelte-feather-icons";
-  import type { PageData } from "./$types";
 
-  export let data: PageData;
-
-  let newPosts: _Post[] = [];
-
-  const query = infiniteQuery<_Post>({
+  const query = infiniteQuery<FullPost>({
     queryKeys: ["posts"],
     queryURL: "/api/posts",
-    limit: 20
-  })
+    limit: 20,
+  });
+
+  let newPosts: FullPost[] = [];
 
   pusherClient
     .subscribe("typer")
-    .bind("new-post", (data: _Post) => (newPosts = [data, ...newPosts]));
+    .bind("new-post", (data: FullPost) => (newPosts = [data, ...newPosts]));
 
   function scrollHandler(e: Event) {
     const target = e.target as HTMLElement;

@@ -1,25 +1,29 @@
 <script lang="ts">
+  import { twMerge } from "tailwind-merge";
+  import { Time } from "$lib/utils/time";
+
+  export let realtime = false;
+  export let realtimeFrequency = 1000;
   export let time: string | number | Date;
-  export let type: "long" | "default" | "short" | "elapsed" = "default";
+  export let type: "long" | "default" | "full" | "elapsed" = "default";
 
-  const now = new Date().getTime();
-  const date = new Date(time);
-  const elapsedTime = now - date.getTime();
+  let date = new Time(time);
 
-  const year = date.getFullYear();
-  const month = date.getMonth();
-  const day = date.getDate();
-  const hour = date.getHours();
-  const minute = date.getMinutes();
-  const second = date.getSeconds();
-
-  const elapsedWeeks = Math.floor(elapsedTime / (1000 * 60 * 60 * 24 * 7));
-  const elapsedDays = Math.floor(elapsedTime / (1000 * 60 * 60 * 24));
-  const elapsedHours = Math.floor(elapsedTime / (1000 * 60 * 60));
-  const elapsedMinutes = Math.floor(elapsedTime / (1000 * 60));
-  const elapsedSeconds = Math.floor(elapsedTime / 1000);
+  if(realtime) {
+    setInterval(() => {
+      date = new Time(time);
+    }, realtimeFrequency)
+  }
 </script>
 
-{#if type === "default"}
-  
-{/if}
+<span class={twMerge("text-xs", $$props.class)}>
+  {#if type === "default"}
+    {date.default}
+  {:else if type === "long"}
+    {date.long}
+  {:else if type === "full"}
+    {date.full}
+  {:else if type === "elapsed"}
+    {date.elapsed}
+  {/if}
+</span>

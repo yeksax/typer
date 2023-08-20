@@ -1,22 +1,26 @@
 import type { Preferences } from "@prisma/client";
 import { writable } from "svelte/store";
-import type { MinifiedUser, _Notification } from "./types";
+import type { MinifiedPost, MinifiedUser, _Notification } from "./types";
 
 interface PathOption {
-  floatingOnly: boolean;
+  floatingOnly?: boolean;
+  hidden?: boolean;
 }
 
-export const creatorState = writable({
+export const creator = writable({
   pathOptions: {
-    "/typer": {
-      floatingOnly: false,
+    "/typer": {},
+    "/(titleheader)/[username]/type/[typeid]": {
+      floatingOnly: true,
     },
   } as Record<string, PathOption>,
+  x: 0,
+  y: 0,
   visible: true,
   locked: true,
   error: null as string | null,
   replying: null as number | null,
-  replyingTo: null as MinifiedUser | null,
+  replyingTo: null as MinifiedPost | null,
   content: {
     body: "",
     attachments: [],

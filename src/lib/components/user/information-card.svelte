@@ -50,13 +50,17 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
-  class="cursor-auto {$$props.class}"
+  class="inline"
   on:pointerleave={handlePointerLeave}
   on:pointerenter={handlePointerEnter}
   on:click={(e) => {
     e.stopPropagation();
   }}>
-  <a use:longhover on:longhover={longHoverHandler} href="/{user.username}">
+  <a
+    class={$$props.class}
+    use:longhover
+    on:longhover={longHoverHandler}
+    href="/{user.username}">
     <slot /></a>
 
   {#if visible}

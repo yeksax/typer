@@ -1,4 +1,5 @@
 import { createInfiniteQuery } from "@tanstack/svelte-query";
+import axios from "axios";
 
 export function infiniteQuery<T>({
   queryKeys,
@@ -10,7 +11,8 @@ export function infiniteQuery<T>({
   queryURL: string;
   limit?: number;
   options?: {
-    customFN: ({
+    params?: Record<string, string>;
+    customFN?: ({
       pageParam,
     }: {
       pageParam?: number | undefined;
@@ -19,10 +21,23 @@ export function infiniteQuery<T>({
 }) {
   const query = async ({
     pageParam = 1,
-  }): Promise<{ next?: string; data: T[] }> =>
-    await fetch(`${queryURL}?page=${pageParam}&per_page=${limit || 10}`).then(
-      (r) => r.json()
-    );
+  }): Promise<{ next?: string; data: T[] }> => {
+    const params = new URLSearchParams();
+
+    params.append("page", String(pageParam));
+    params.append("per_page", String(limit || 10));
+    if (options?.params) {
+      for (const [key, value] of Object.entries(options.params)) {
+        params.append(key, value);
+      }
+    }
+
+    return (
+      await axios.get(`${queryURL}`, {
+        params,
+      })
+    ).data;
+  };
 
   return createInfiniteQuery({
     queryKey: queryKeys,

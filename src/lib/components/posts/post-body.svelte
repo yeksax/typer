@@ -1,12 +1,12 @@
 <script lang="ts">
-  import type { _Post } from "$lib/types";
+  import type { FullPost } from "$lib/types";
   import {
     hardAccidentalClickPrevention,
     softAccidentalClickPrevention,
   } from "$lib/utils/hooks/prevent-accidental-click";
   const howLongIsTooLong = 150;
 
-  export let post: _Post;
+  export let post: FullPost;
 
   const short_content = post.content.substring(0, howLongIsTooLong) + "...";
   const hasContentSwitcher = post.content.length > howLongIsTooLong;

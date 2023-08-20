@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import { creatorState, notifications, unreadNotifications } from "$lib/stores";
+  import { creator, notifications, unreadNotifications } from "$lib/stores";
   import {
     BellIcon,
     BookmarkIcon,
@@ -86,7 +86,7 @@
   const size = "16";
 
   function unlockCreator() {
-    creatorState.update((v) => ({ ...v, locked: false }));
+    creator.update((v) => ({ ...v, locked: false }));
   }
 </script>
 

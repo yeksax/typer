@@ -13,7 +13,10 @@
   export let onDragMove: (e: PointerEvent) => void = () => {};
   export let onDragEnd: (e: PointerEvent) => void = () => {};
 
-  let draggable: HTMLElement;
+  export let offsetY = 0;
+  export let offsetX = 0;
+
+  export let draggable: HTMLElement;
 
   let translateX = "0px";
   let translateY = "0px";
@@ -88,7 +91,13 @@
 
   $: {
     if (ready) {
-      translate = `translate(calc(${translateX} + ${x}px), calc(${translateY} + ${y}px))`;
+      if (disabled) {
+        translate = `translate(calc(${translateX} + ${x}px), calc(${translateY} + ${y}px))`;
+      } else {
+        translate = `translate(calc(${translateX} + ${
+          x + offsetX
+        }px), calc(${translateY} + ${y + offsetY}px))`;
+      }
     } else {
       translate = "";
     }

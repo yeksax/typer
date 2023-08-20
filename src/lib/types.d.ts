@@ -1,4 +1,4 @@
-import type { File, Notification, Post } from "@prisma/client";
+import type { Attachment, File, Notification, Post } from "@prisma/client";
 
 interface MinifiedUser {
   _count: {
@@ -15,27 +15,31 @@ interface MinifiedUser {
 }
 
 interface MinifiedPost {
+  id: number;
   content: string;
   createdAt: Date;
   author: MinifiedUser;
+  attachments: Attachment[];
 
   _count: {
-    like: number;
-  }
+    likes: number;
+    replies: number;
+    reposts: number;
+  };
 }
 
 interface _Notification extends Notification {
-  notificationActors: MinifiedUser[]
+  notificationActors: MinifiedUser[];
 }
 
-interface _Post extends Post {
+interface FullPost extends Post {
   replies:
     | {
         author: {
           avatar: string;
         };
       }[]
-    | _Post[];
+    | FullPost[];
   thread?: (Post & {
     attachments: File[];
     _count: {

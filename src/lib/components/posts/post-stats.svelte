@@ -8,17 +8,24 @@
     RepeatIcon,
     ShareIcon,
   } from "svelte-feather-icons";
-  import type { _Post } from "../../types";
+  import type { FullPost } from "../../types";
   import PostStat from "./post-stat.svelte";
-  import { creatorState, newLikes, newReplies, newUnlikes } from "$lib/stores";
+  import { creator, newLikes, newReplies, newUnlikes } from "$lib/stores";
 
   const iconProps = {
     strokeWidth: 2,
     size: "15",
   };
 
-  export let post: _Post;
+  export let post: FullPost;
+  export let dedicated = false;
+
+  let element: HTMLElement;
+
+  $: route = $page.route.id as string;
+
   let isLiked = post.likes.length > 0;
+  $: isReplying = $creator.replyingTo?.id === post.id;
 
   $: {
     if ($page.data.user) {
@@ -47,12 +54,26 @@
   }
 
   function reply() {
-    creatorState.update((state) => ({
-      ...state,
-      replying: post.id,
-      replyingTo: post.author,
-      locked: false,
-    }));
+    creator.update((state) => {
+      state = {
+        ...state,
+        replying: post.id,
+        replyingTo: post,
+        locked: false,
+      };
+
+      if (dedicated) {
+        if (state.y === undefined || state.y === 0)
+          state.y = element.getBoundingClientRect().y;
+
+        state.pathOptions[route] = {
+          ...state.pathOptions[route],
+          hidden: false,
+        };
+      }
+
+      return state;
+    });
   }
 </script>
 
@@ -60,11 +81,17 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
   class="pt-2 flex w-full items-center justify-between"
+  bind:this={element}
   use:hardAccidentalClickPrevention>
   <PostStat
     value={post._count.replies + ($newReplies[post.id] ?? 0)}
     clickAction={reply}>
-    <MessageSquareIcon slot="icon" {...iconProps} />
+    <MessageSquareIcon
+      class="transition-all duration-100 {isReplying
+        ? 'fill-black dark:fill-white'
+        : 'fill-transparent'}"
+      slot="icon"
+      {...iconProps} />
   </PostStat>
 
   <PostStat value={post._count.reposts}>

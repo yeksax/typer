@@ -41,6 +41,11 @@ export async function POST({ request, locals, params }) {
     },
     include: {
       author: true,
+      thread: {
+        select: {
+          id: true,
+        },
+      },
     },
   });
 
@@ -93,6 +98,12 @@ export async function POST({ request, locals, params }) {
 
   const post: _Post = await prisma.post.create({
     data: {
+      thread: {
+        connect: [
+          ...replyingTo.thread.map((post) => ({ id: post.id })),
+          { id: replyingTo.id },
+        ],
+      },
       content: parsed.data.content,
       replied: {
         connect: {

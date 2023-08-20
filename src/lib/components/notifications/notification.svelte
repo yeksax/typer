@@ -50,7 +50,10 @@
 <div
   class="{notification.isRead
     ? 'bg-white dark:bg-zinc-850'
-    : 'bg-zinc-100 dark:bg-zinc-800'} flex gap-8 items-center cursor-pointer text-sm px-6 md:px-8 py-3 md:py-4 border-black dark:border-zinc-950 rounded-md border-2">
+    : 'bg-zinc-100 dark:bg-zinc-800'} flex gap-6 items-center cursor-pointer text-sm px-6 md:px-8 py-3 md:py-4 border-black dark:border-zinc-950 rounded-md border-2">
+  <svelte:component
+    this={actionIcon}
+    class="dark:fill-white dark:stroke-white fill-black stroke-black" />
   <div
     on:click={() => router.push(`/${notification.redirect}`)}
     class="flex-1 flex flex-col gap-1">
@@ -84,9 +87,6 @@
       </div>
     {/if}
   </div>
-  <svelte:component
-    this={actionIcon}
-    class="dark:fill-white dark:stroke-white fill-black stroke-black" />
 </div>
 
 <style lang="scss">

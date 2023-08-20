@@ -16,6 +16,4 @@
       {$page.data.user.name}#{$page.data.user.tag}
     </span>
   </div>
-
-  <slot />
 </div>

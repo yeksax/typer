@@ -8,6 +8,7 @@ export async function GET({ request, locals }: RequestEvent) {
   const searchParams = new URL(request.url).searchParams;
   let page: string | number | null = searchParams.get("page");
   let per_page: string | number | null = searchParams.get("per_page");
+  let replying_to: string | number | null = searchParams.get("replying_to");
 
   if (!page) {
     page = 1;
@@ -25,10 +26,17 @@ export async function GET({ request, locals }: RequestEvent) {
     per_page = parseInt(per_page);
   }
 
+  if (replying_to && typeof replying_to !== "number") {
+    replying_to = parseInt(replying_to);
+  }
+
   const data = await getPosts({
     session,
     page: page,
     per_page: per_page,
+    options: {
+      replyingTo: replying_to as number | null,
+    }
   });
 
   const next = new URL(request.url);

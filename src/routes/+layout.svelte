@@ -7,7 +7,7 @@
   import SidePanel from "$lib/components/side-panel/side-panel.svelte";
   import "$lib/globals.scss";
   import { webVitals } from "$lib/web-vitals";
-  import { creatorState, theme } from "$lib/stores";
+  import { creator, theme } from "$lib/stores";
   import { pageTitle } from "$lib/utils/metadata";
   import { router } from "$lib/utils/router";
   import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
@@ -60,11 +60,14 @@
   });
 
   afterNavigate(({ to, type }) => {
-    if (type === "goto") return;
     router.register(to?.url.pathname ?? "/");
+
+    creator.update((state) => ({
+      ...state,
+    }));
   });
 
-  $: creatorAllowed = Object.keys($creatorState.pathOptions).includes(
+  $: creatorAllowed = Object.keys($creator.pathOptions).includes(
     $page.route.id as string
   );
 </script>

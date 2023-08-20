@@ -1,5 +1,5 @@
 import { prisma } from "$lib/prisma";
-import type { _Post } from "$lib/types";
+import type { FullPost } from "$lib/types";
 import type { Session } from "@auth/core/types";
 import type { Post } from "@prisma/client";
 
@@ -15,7 +15,7 @@ interface PostFetchManyOptions extends PostFecthOptions {
   page: number;
   per_page: number;
   options?: {
-    replyingTo: Post["id"] | null;
+    replyingTo?: Post["id"] | null;
   };
 }
 
@@ -26,7 +26,37 @@ export async function getPost({ session, id }: PostFetchSingleOptions) {
     },
     include: {
       thread: {
+        orderBy: {
+          createdAt: "asc",
+        },
         include: {
+          repost: {
+            include: {
+              attachments: true,
+            },
+          },
+          likes: {
+            select: {
+              id: true,
+            },
+            where: session
+              ? {
+                  email: session.user?.email as string,
+                }
+              : {
+                  id: "",
+                },
+          },
+          replies: {
+            take: 3,
+            select: {
+              author: {
+                select: {
+                  avatar: true,
+                },
+              },
+            },
+          },
           author: {
             select: {
               displayName: true,
@@ -54,11 +84,6 @@ export async function getPost({ session, id }: PostFetchSingleOptions) {
           },
         },
       },
-      repost: {
-        include: {
-          attachments: true,
-        },
-      },
       author: {
         select: {
           displayName: true,
@@ -76,6 +101,12 @@ export async function getPost({ session, id }: PostFetchSingleOptions) {
           },
         },
       },
+      attachments: true,
+      repost: {
+        include: {
+          attachments: true,
+        },
+      },
       likes: {
         select: {
           id: true,
@@ -88,7 +119,6 @@ export async function getPost({ session, id }: PostFetchSingleOptions) {
               id: "",
             },
       },
-      attachments: true,
       replies: {
         take: 3,
         select: {
@@ -209,7 +239,7 @@ export async function getPosts({
         },
       },
     },
-  })) satisfies _Post[];
+  })) satisfies FullPost[];
 
   return {
     next: posts.length === per_page + 1 ? page + 1 : null,
