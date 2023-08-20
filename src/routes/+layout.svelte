@@ -68,24 +68,24 @@
   });
 
   $: creatorAllowed = Object.keys($creator.pathOptions).includes(
-    $page.route.id as string
+    $page.url.pathname as string
   );
 
   function scrollHandler(e: Event) {
     const target = e.target as HTMLElement;
 
-    if ($scrollPosition[$page.route.id as string] != undefined) {
+    if ($scrollPosition[$page.url.pathname as string] != undefined) {
       scrollPosition.update((state) => {
-        state[$page.route.id as string] = target.scrollTop;
+        state[$page.url.pathname as string] = target.scrollTop;
         return state;
       });
     }
   }
 
   afterNavigate(() => {
-    if ($scrollPosition[$page.route.id as string]) {
+    if ($scrollPosition[$page.url.pathname as string]) {
       document.body.scrollTo({
-        top: $scrollPosition[$page.route.id as string],
+        top: $scrollPosition[$page.url.pathname as string],
       });
     } else {
       document.body.scrollTo({
@@ -94,7 +94,7 @@
 
       scrollPosition.update((state) => ({
         ...state,
-        [$page.route.id as string]: 0,
+        [$page.url.pathname as string]: 0,
       }));
     }
   });
