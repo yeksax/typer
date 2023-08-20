@@ -1,38 +1,53 @@
-# create-svelte
+# Typer
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+> Bem-vindo ao Typer, uma plataforma dinâmica de rede social construída com o poder do Svelte. Junte-se a nós para explorar o futuro de experiências interativas na web.
 
-## Creating a project
+## Features
 
-If you're seeing this, you've probably already done this step. Congrats!
+- 🔥 Comunicação em tempo real. 
+- ✨ Interface amigável com estética neobrutalista. 
+- 🌊 Experiência do usuário fluida com elementos arrastáveis. 
+- 🌐 Navegação suave com o sistema de roteamento do SvelteKit.
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+## Stack Utilizada
 
-# create a new project in my-app
-npm create svelte@latest my-app
+- Typescript
+- SvelteKit v1
+- Supabase
+- Pusher.js
+- Tailwind
+- Prisma ORM
+- Auth.js
+
+## Uso
+
+1. Clone o repositório
+2. Instale as dependências com `npm install`
+3. Configure seu `.env`
+
+```env
+DATABASE_URL=********
+
+# Para auth com Github https://authjs.dev/reference/core/providers_github
+GITHUB_ID=********
+GITHUB_SECRET=********
+
+# Para auth com Google https://authjs.dev/reference/core/providers_google
+GOOGLE_ID=********
+GOOGLE_SECRET=********
+
+# Supabase Docs https://supabase.com/docs
+SUPABASE_SERVICE_ROLE=********
+SUPABASE_URL=********
+
+# Pusher docs https://pusher.com/docs
+PUSHER_APP_ID=********
+PUBLIC_PUSHER_APP_KEY=********
+PUSHER_APP_SECRET=********
+
+Auth.js docs (para sveltekit) https://authjs.dev/reference/sveltekit
+AUTH_SECRET=********
+AUTH_URL="http://localhost:5173"
 ```
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+4. Execute com `npm run dev`
