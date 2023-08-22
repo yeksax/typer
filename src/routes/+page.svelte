@@ -8,11 +8,11 @@
   <h3 class="text-xl mt-4 font-semibold">
     Refeito com muito carinho <br /> S2
   </h3>
-  <p class="text-sm opacity-50">
-    E ainda não tem uma página inicial &lt;/3
+  <p class="text-sm text-zinc-700 dark:text-zinc-400">
+    E mais rápido 🔥
   </p>
 
   <a class="mt-8" href="/typer">
-    <Button class="text-base px-6 py-1 rounded-md">Explorar</Button>
+    <Button class="text-sm font-semibold px-4 py-1 rounded-md">Explorar</Button>
   </a>
 </div>

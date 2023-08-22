@@ -40,8 +40,8 @@ export async function POST({ request, locals }) {
   let replyingTo: (Post & { author: User; thread: { id: number }[] }) | null =
     null;
 
-    // TO-DO quotes
-  // let quoteTo: (Post & { author: User }) | null = null; 
+  // TO-DO quotes
+  // let quoteTo: (Post & { author: User }) | null = null;
 
   if (replying_to) {
     replyingTo = await prisma.post.findFirst({
@@ -216,6 +216,7 @@ export async function POST({ request, locals }) {
               name: file.name,
               size: file.size,
               postId: post.id,
+              type: file.type,
               url,
             },
           })

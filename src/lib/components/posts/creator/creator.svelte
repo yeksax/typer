@@ -98,7 +98,7 @@
         form.reset();
         creator.update((state) => ({
           ...state,
-          content: { attachments: [], body: "" },
+          content: { ...state.content, attachments: null, body: "" },
         }));
 
         if (isReply) {
@@ -163,6 +163,12 @@
     <form
       bind:this={form}
       use:longpress
+      on:input={(e) => {
+        creator.update((state) => ({
+          ...state,
+          error: null,
+        }));
+      }}
       on:longpress={longPressHandler}
       data-longpressms={500}
       on:submit={publishHandler}

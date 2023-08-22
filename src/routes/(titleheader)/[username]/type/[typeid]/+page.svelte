@@ -55,7 +55,6 @@
   afterNavigate(() => {
     scrollToMainPost();
     const currentId = parseInt($page.params.typeid as string);
-    console.log(currentId)
     if (!recentPosts[currentId]) recentPosts[currentId] = [];
 
     pusherClient

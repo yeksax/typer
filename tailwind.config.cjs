@@ -11,6 +11,9 @@ module.exports = {
         sm: ".25rem",
         xs: ".125rem",
       },
+      fontSize: {
+        xxs: ".625rem"
+      },
       fontFamily: {
         source_code_pro: ["Source Code Pro"],
       },

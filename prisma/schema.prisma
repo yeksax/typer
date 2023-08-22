@@ -160,6 +160,7 @@ model Attachment {
   id   String @id @default(cuid())
   name String
   url  String
+  type String
   size Int
 
   message         Message?       @relation(fields: [messageId], references: [id])
@@ -197,7 +198,7 @@ model Post {
   repost  Post? @relation("Reposts", fields: [repostId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   replied Post? @relation("Replies", fields: [repliedId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  authorId    String @map("userId")
+  authorId  String @map("userId")
   repostId  Int?
   repliedId Int?
 

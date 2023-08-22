@@ -58,8 +58,6 @@
         y = dragY - rect!.top - pointerDown.y;
       }
     }
-
-    console.log(pointerDown);
   }
 
   function endMovement({ forceSnap }: { forceSnap?: boolean } = {}) {

@@ -21,7 +21,10 @@ export const creator = writable({
   replyingTo: null as MinifiedPost | null,
   content: {
     body: "",
-    attachments: [],
+    attachments: null as null | FileList,
+    maxImages: 4,
+    maxFiles: 2,
+    maxVideos: 1,
   },
 });
 
@@ -40,4 +43,4 @@ export const newReplies = writable<{ [key: number]: number }>({});
 export const unreadNotifications = writable<number>(0);
 export const notifications = writable<_Notification[]>([]);
 
-export const scrollPosition = writable<Record<string, number>>({})
+export const scrollPosition = writable<Record<string, number>>({});

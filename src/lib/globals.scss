@@ -68,6 +68,20 @@ body {
 .hover-effect {
   position: relative;
 
+  &.position-fix {
+    width: 28px;
+    aspect-ratio: 1/1;
+    display: grid;
+    place-content: center;
+
+    &:hover {
+      &::after {
+        width: 28px;
+        opacity: 1;
+      }
+    }
+  }
+
   &:hover {
     &::after {
       width: 32px;

@@ -19,9 +19,11 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
-  on:pointerup={() => router.push(`/${post.author.username}/type/${post.id}`)}
+  on:pointerup={() => {
+    if (!dedicated && document.getSelection()?.toString() === "") router.push(`/${post.author.username}/type/${post.id}`);
+  }}
   class={twMerge(
-    "post overflow-hidden rounded-lg cursor-pointer border-2 bg-white dark:bg-zinc-850 dark:hover:bg-zinc-800 transition-all border-black dark:border-zinc-950 flex flex-col gap-1 px-6 py-3 text-sm",
+    "rounded-lg cursor-pointer border-2 bg-white dark:bg-zinc-850 dark:hover:bg-zinc-800 transition-all border-black dark:border-zinc-950 flex flex-col gap-1 px-6 py-3 text-sm",
     $$props.class
   )}>
   <div class="flex gap-4 justify-between w-full">
@@ -47,7 +49,7 @@
     </InformationCard>
 
     {#if !hideStats}
-      <Time time={post.createdAt} type="elapsed" realtime/>
+      <Time time={post.createdAt} type="elapsed" realtime />
     {/if}
   </div>
 
@@ -65,6 +67,7 @@
             user={replyingTo}>@{replyingTo.username}</InformationCard>
         </div>
       {/if}
+
       <PostBody {post} />
 
       {#if !hideStats}

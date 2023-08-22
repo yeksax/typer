@@ -4,6 +4,7 @@
     hardAccidentalClickPrevention,
     softAccidentalClickPrevention,
   } from "$lib/utils/hooks/prevent-accidental-click";
+  import FilesView from "../file-view/files-view.svelte";
   const howLongIsTooLong = 150;
 
   export let post: FullPost;
@@ -29,5 +30,9 @@
         {expanded ? "Ver menos" : "Ver mais"}
       </span>
     </div>
+  {/if}
+
+  {#if post.attachments.length > 0}
+    <FilesView files={post.attachments} />
   {/if}
 </div>
