@@ -16,11 +16,7 @@ import { redirect, type Handle } from "@sveltejs/kit";
 import { sequence } from "@sveltejs/kit/hooks";
 import { PUBLIC_PUSHER_APP_KEY } from "$env/static/public";
 
-const PROTECTED_ROUTES = [
-  "/profile",
-  "/notifications",
-  "/settings/**",
-];
+const PROTECTED_ROUTES = ["/profile", "/notifications", "/settings/**"];
 
 function regexCreator(route: string) {
   let regexString = route;
@@ -53,10 +49,10 @@ async function authorization({ event, resolve }: any) {
 }
 
 const pusherServer = new PusherServer({
-	appId: PUSHER_APP_ID,
-	key: PUBLIC_PUSHER_APP_KEY,
-	secret: PUSHER_APP_SECRET,
-	cluster: "sa1",
+  appId: PUSHER_APP_ID,
+  key: PUBLIC_PUSHER_APP_KEY,
+  secret: PUSHER_APP_SECRET,
+  cluster: "sa1",
 });
 
 export const handle: Handle = sequence(
@@ -69,8 +65,8 @@ export const handle: Handle = sequence(
   }),
   authorization,
   async ({ event, resolve }) => {
-    event.locals.pusher = pusherServer
+    event.locals.pusher = pusherServer;
 
-    return await resolve(event)
+    return await resolve(event);
   }
 );

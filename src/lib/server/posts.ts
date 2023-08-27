@@ -19,7 +19,10 @@ interface PostFetchManyOptions extends PostFecthOptions {
   };
 }
 
-export async function getPost({ session, id }: PostFetchSingleOptions) {
+export async function getPost({
+  session,
+  id,
+}: PostFetchSingleOptions): Promise<FullPost | null> {
   return await prisma.post.findFirst({
     where: {
       id: parseInt(id),
@@ -33,6 +36,23 @@ export async function getPost({ session, id }: PostFetchSingleOptions) {
           repost: {
             include: {
               attachments: true,
+              author: {
+                select: {
+                  displayName: true,
+                  avatar: true,
+                  name: true,
+                  tag: true,
+                  banner: true,
+                  username: true,
+                  biography: true,
+                  _count: {
+                    select: {
+                      followers: true,
+                      following: true,
+                    },
+                  },
+                },
+              },
             },
           },
           likes: {
@@ -84,6 +104,28 @@ export async function getPost({ session, id }: PostFetchSingleOptions) {
           },
         },
       },
+      repost: {
+        include: {
+          attachments: true,
+          author: {
+            select: {
+              displayName: true,
+              avatar: true,
+              name: true,
+              tag: true,
+              banner: true,
+              username: true,
+              biography: true,
+              _count: {
+                select: {
+                  followers: true,
+                  following: true,
+                },
+              },
+            },
+          },
+        },
+      },
       author: {
         select: {
           displayName: true,
@@ -102,11 +144,6 @@ export async function getPost({ session, id }: PostFetchSingleOptions) {
         },
       },
       attachments: true,
-      repost: {
-        include: {
-          attachments: true,
-        },
-      },
       likes: {
         select: {
           id: true,
@@ -188,6 +225,7 @@ export async function getPosts({
       },
       repost: {
         include: {
+          author: true,
           attachments: true,
         },
       },

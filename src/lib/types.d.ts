@@ -51,6 +51,7 @@ interface FullPost extends Post {
   repost:
     | (Post & {
         attachments: File[];
+        author: MinifiedUser;
       })
     | null;
   author: MinifiedUser;

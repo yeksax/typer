@@ -40,13 +40,26 @@ export async function POST({ request, locals }) {
   let replyingTo: (Post & { author: User; thread: { id: number }[] }) | null =
     null;
 
-  // TO-DO quotes
-  // let quoteTo: (Post & { author: User }) | null = null;
-
   if (replying_to) {
     replyingTo = await prisma.post.findFirst({
       where: {
         id: parseInt(replying_to),
+      },
+      include: {
+        author: true,
+        thread: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+  }
+
+  if (quote_to) {
+    replyingTo = await prisma.post.findFirst({
+      where: {
+        id: parseInt(quote_to),
       },
       include: {
         author: true,
@@ -104,22 +117,32 @@ export async function POST({ request, locals }) {
 
   const post: FullPost = await prisma.post.create({
     data: {
-      thread: replyingTo
-        ? {
-            connect: [
-              ...replyingTo.thread.map((post) => ({ id: post.id })),
-              { id: replyingTo.id },
-            ],
-          }
-        : {},
+      thread:
+        replying_to && replyingTo
+          ? {
+              connect: [
+                ...replyingTo.thread.map((post) => ({ id: post.id })),
+                { id: replyingTo.id },
+              ],
+            }
+          : {},
       content: parsed.data.content,
-      replied: replyingTo
-        ? {
-            connect: {
-              id: replyingTo.id,
-            },
-          }
-        : {},
+      replied:
+        replying_to && replyingTo
+          ? {
+              connect: {
+                id: replyingTo.id,
+              },
+            }
+          : {},
+      repost:
+        quote_to && replyingTo
+          ? {
+              connect: {
+                id: replyingTo.id,
+              },
+            }
+          : {},
       author: {
         connect: {
           email: session.user?.email as string,
@@ -152,6 +175,23 @@ export async function POST({ request, locals }) {
       repost: {
         include: {
           attachments: true,
+          author: {
+            select: {
+              displayName: true,
+              avatar: true,
+              name: true,
+              tag: true,
+              banner: true,
+              username: true,
+              biography: true,
+              _count: {
+                select: {
+                  followers: true,
+                  following: true,
+                },
+              },
+            },
+          },
         },
       },
       likes: true,
@@ -235,7 +275,7 @@ export async function POST({ request, locals }) {
 
   post.attachments = attachments;
 
-  if (replyingTo) {
+  if (replying_to && replyingTo) {
     await pusher.trigger(`post__${replyingTo.id}`, "new-reply", post);
   } else {
     await pusher.trigger(`typer`, "new-post", post);
@@ -245,7 +285,7 @@ export async function POST({ request, locals }) {
     const notifier = new Notifier(locals.pusher, { id: replyingTo.authorId });
     notifier.handle({
       text: post.content,
-      action: "REPLY",
+      action: quote_to ? "QUOTE" : "REPLY",
       title: `$_0 seu post`,
       actors: [{ id: user.id as string }],
       redirect: `${post.author.username}/posts/${post.id}`,

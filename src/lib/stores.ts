@@ -17,8 +17,9 @@ export const creator = writable({
   visible: true,
   locked: true,
   error: null as string | null,
-  replying: null as number | null,
+  inResponseTo: null as number | null,
   replyingTo: null as MinifiedPost | null,
+  quotingTo: null as MinifiedPost | null,
   content: {
     body: "",
     attachments: null as null | FileList,
@@ -39,8 +40,12 @@ export const newLikes = writable<number[]>([]);
 export const newUnlikes = writable<number[]>([]);
 
 export const newReplies = writable<{ [key: number]: number }>({});
+export const newQuotes = writable<{ [key: number]: number }>({});
 
 export const unreadNotifications = writable<number>(0);
 export const notifications = writable<_Notification[]>([]);
 
 export const scrollPosition = writable<Record<string, number>>({});
+
+export const navigationStatus = writable<"default" | "minified">("default");
+

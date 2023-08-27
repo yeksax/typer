@@ -10,7 +10,14 @@
   } from "svelte-feather-icons";
   import type { FullPost } from "../../types";
   import PostStat from "./post-stat.svelte";
-  import { creator, newLikes, newReplies, newUnlikes } from "$lib/stores";
+  import {
+    creator,
+    newLikes,
+    newReplies,
+    newUnlikes,
+    newQuotes,
+  } from "$lib/stores";
+  import PostRepost from "./post-repost.svelte";
 
   const iconProps = {
     strokeWidth: 2,
@@ -53,12 +60,34 @@
     }
   }
 
+  function quote() {
+    creator.update((state) => {
+      state = {
+        ...state,
+        inResponseTo: post.id,
+        quotingTo: post,
+        replyingTo: null,
+        locked: false,
+      };
+
+      if (dedicated) {
+        state.pathOptions[route] = {
+          ...state.pathOptions[route],
+          hidden: false,
+        };
+      }
+
+      return state;
+    });
+  }
+
   function reply() {
     creator.update((state) => {
       state = {
         ...state,
-        replying: post.id,
+        inResponseTo: post.id,
         replyingTo: post,
+        quotingTo: null,
         locked: false,
       };
 
@@ -91,8 +120,15 @@
       {...iconProps} />
   </PostStat>
 
-  <PostStat value={post._count.reposts}>
-    <RepeatIcon slot="icon" {...iconProps} />
+  <PostStat
+    value={post._count.reposts + ($newQuotes[post.id] ?? 0)}
+    clickAction={quote}>
+    <RepeatIcon
+      class="transition-all duration-100 {isReplying
+        ? 'fill-black dark:fill-white'
+        : 'fill-transparent'}"
+      slot="icon"
+      {...iconProps} />
   </PostStat>
 
   <PostStat value={post._count.likes} clickAction={toggleLike}>

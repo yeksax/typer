@@ -228,6 +228,8 @@ model Notification {
 
 enum NotificationAction {
   REPLY
+  QUOTE
+  REPOST
   LIKE
   FOLLOW
   REPORT

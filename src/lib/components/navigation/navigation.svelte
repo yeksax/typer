@@ -1,6 +1,11 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import { creator, notifications, unreadNotifications } from "$lib/stores";
+  import {
+    creator,
+    navigationStatus,
+    notifications,
+    unreadNotifications,
+  } from "$lib/stores";
   import {
     BellIcon,
     BookmarkIcon,
@@ -92,6 +97,8 @@
   $: creatorAllowed = Object.keys($creator.pathOptions).includes(
     $page.url.pathname as string
   );
+
+  $: minified = $page.route.id === "/typos";
 </script>
 
 <!-- mobile navigation -->
@@ -125,7 +132,7 @@
   </Draggable>
 </div>
 
-<div class="hidden lg:flex flex-1 justify-end">
+<div class="hidden lg:flex {minified ? 'w-max' : 'flex-1'} justify-end">
   <div
     class="flex h-screen justify-end py-8 border-black dark:border-zinc-950 fixed">
     <div class="w-max h-full flex flex-col justify-between text-sm pr-4">
@@ -135,7 +142,7 @@
           {#if nav_item.requires}
             <NavigationItem
               href={nav_item.href}
-              text={path}
+              text={minified ? "" : path}
               blob={nav_item.blob}>
               <svelte:component this={nav_item.icon} {size} />
             </NavigationItem>
@@ -151,7 +158,7 @@
               <NavigationItem
                 blob={nav_item.blob}
                 href={nav_item.href}
-                text={path}>
+                text={minified ? "" : path}>
                 <svelte:component this={nav_item.icon} {size} />
               </NavigationItem>
             {/if}

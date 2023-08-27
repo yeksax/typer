@@ -1,7 +1,7 @@
 <script lang="ts">
   import { router } from "$lib/utils/router";
   import { twMerge } from "tailwind-merge";
-  import type { MinifiedPost, FullPost, MinifiedUser } from "../../types";
+  import type { FullPost, MinifiedUser } from "../../types";
   import Time from "../time.svelte";
   import InformationCard from "../user/information-card.svelte";
   import PostBody from "./post-body.svelte";
@@ -11,6 +11,7 @@
   export let dedicated = false;
   export let minified = false;
   export let connectDown = false;
+  export let singleColumn = false;
   export let replyingTo: MinifiedUser | null = null;
 
   export let post: FullPost;
@@ -19,11 +20,14 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
-  on:pointerup={() => {
-    if (!dedicated && document.getSelection()?.toString() === "") router.push(`/${post.author.username}/type/${post.id}`);
+  on:pointerup={(e) => {
+    e.stopPropagation();
+    if (!dedicated && document.getSelection()?.toString() === "") {
+      router.push(`/${post.author.username}/type/${post.id}`);
+    }
   }}
   class={twMerge(
-    "rounded-lg cursor-pointer border-2 bg-white dark:bg-zinc-850 dark:hover:bg-zinc-800 transition-all border-black dark:border-zinc-950 flex flex-col gap-1 px-6 py-3 text-sm",
+    "rounded-lg cursor-pointer border-2 bg-white dark:bg-zinc-850 transition-all border-black dark:border-zinc-950 flex flex-col gap-1 px-6 py-3 text-sm",
     $$props.class
   )}>
   <div class="flex gap-4 justify-between w-full">
@@ -54,11 +58,13 @@
   </div>
 
   <div class="flex {minified ? 'gap-3' : 'gap-4'}">
-    <span class="flex justify-center {minified ? 'w-7' : 'w-9'}">
-      {#if connectDown}
-        <div class="w-0.5 h-full bg-zinc-400 dark:bg-zinc-600 rounded-full" />
-      {/if}
-    </span>
+    {#if !singleColumn}
+      <span class="flex justify-center {minified ? 'w-7' : 'w-9'}">
+        {#if connectDown}
+          <div class="w-0.5 h-full bg-zinc-400 dark:bg-zinc-600 rounded-full" />
+        {/if}
+      </span>
+    {/if}
     <div class="flex flex-col gap-1 flex-1 {minified ? 'text-xs' : ''}">
       {#if replyingTo}
         <div class="text-xs text-zinc-500">
@@ -69,6 +75,14 @@
       {/if}
 
       <PostBody {post} />
+
+      {#if post.repost}
+        <svelte:self
+          minified
+          hideStats
+          post={post.repost}
+          class="mt-3 p-1 px-3 bg-zinc-50 dark:bg-zinc-750 hover:bg-zinc-800" />
+      {/if}
 
       {#if !hideStats}
         <PostStats {post} {dedicated} />

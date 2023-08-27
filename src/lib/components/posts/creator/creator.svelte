@@ -3,7 +3,7 @@
   import Draggable from "$lib/components/draggable.svelte";
   import LoadingBar from "$lib/components/loading-bar.svelte";
   import InformationCard from "$lib/components/user/information-card.svelte";
-  import { creator, newReplies } from "$lib/stores";
+  import { creator, newReplies as newQuotes } from "$lib/stores";
   import { longpress } from "$lib/utils/hooks/long-press";
   import axios, { AxiosError } from "axios";
   import { Minimize2Icon, XIcon } from "svelte-feather-icons";
@@ -11,6 +11,7 @@
   import CreatorFooter from "./creator-footer.svelte";
   import CreatorHead from "./creator-head.svelte";
   import PostReplyContent from "./post-reply-content.svelte";
+  import PostQuoteContent from "./post-quote-content.svelte";
 
   $: route = $page.route.id as string;
 
@@ -70,7 +71,7 @@
         lockDraggable();
         creator.update((state) => ({
           ...state,
-          replying: null,
+          inResponseTo: null,
           replyingTo: null,
         }));
       } else if (key === "n") {
@@ -83,12 +84,24 @@
     if (e) e.preventDefault();
     const data = new FormData(form);
 
-    const isReply = $creator.replying !== null;
+    const isReply = $creator.replyingTo !== null;
+    const isQuote = $creator.quotingTo !== null;
     const endpoint = "/api/posts/publish";
 
-    const params = {
-      replying_to: $creator.replying,
-    };
+    let params: Record<string, string | number | boolean> = {};
+
+    if ($creator.inResponseTo) {
+      if (isQuote) {
+        params = {
+          quote_to: $creator.inResponseTo,
+        };
+      }
+      if (isReply) {
+        params = {
+          replying_to: $creator.inResponseTo,
+        };
+      }
+    }
 
     await axios
       .post(endpoint, data, {
@@ -99,20 +112,41 @@
         creator.update((state) => ({
           ...state,
           content: { ...state.content, attachments: null, body: "" },
+          replyingTo: null,
+          quotingTo: null,
+          inResponseTo: null,
         }));
 
         if (isReply) {
-          newReplies.update((state) => {
+          newQuotes.update((state) => {
             const actualKeys = Object.keys(state);
             const valueAlreadyExists = actualKeys.includes(
-              $creator.replying!.toString()
+              $creator.inResponseTo!.toString()
             );
 
             if (valueAlreadyExists) {
-              const actualValue = state[$creator.replying!];
-              state[$creator.replying!] = actualValue + 1;
+              const actualValue = state[$creator.inResponseTo!];
+              state[$creator.inResponseTo!] = actualValue + 1;
             } else {
-              state[$creator.replying!] = 1;
+              state[$creator.inResponseTo!] = 1;
+            }
+
+            return state;
+          });
+        }
+
+        if (isQuote) {
+          newQuotes.update((state) => {
+            const actualKeys = Object.keys(state);
+            const valueAlreadyExists = actualKeys.includes(
+              $creator.inResponseTo!.toString()
+            );
+
+            if (valueAlreadyExists) {
+              const actualValue = state[$creator.inResponseTo!];
+              state[$creator.inResponseTo!] = actualValue + 1;
+            } else {
+              state[$creator.inResponseTo!] = 1;
             }
 
             return state;
@@ -129,7 +163,7 @@
 
   function cancelReply() {
     creator.update((state) => {
-      state = { ...state, replying: null, replyingTo: null };
+      state = { ...state, inResponseTo: null, replyingTo: null };
 
       if (state.pathOptions[route]?.hidden != undefined) {
         state.pathOptions[route] = {
@@ -176,11 +210,11 @@
       <LoadingBar channel={user_id} event="publish-progress" />
 
       <div class="absolute right-6">
-        {#if !locked && !$creator.replying}
+        {#if !locked && !$creator.inResponseTo}
           <button type="button" on:click={lockDraggable}>
             <Minimize2Icon size="14" />
           </button>
-        {:else if $creator.replying}
+        {:else if $creator.inResponseTo}
           <button type="button" on:click={cancelReply}>
             <XIcon size="14" />
           </button>
@@ -193,24 +227,36 @@
       <CreatorHead />
 
       <div class="flex gap-4">
-        <span class="w-9" />
+        <span class="flex justify-center w-9">
+          {#if $creator.quotingTo}
+            <div
+              class="w-0.5 h-full bg-zinc-400 dark:bg-zinc-600 rounded-full" />
+          {/if}
+        </span>
         <div class="flex flex-col flex-1 gap-2 truncate">
-          {#if $creator.replyingTo}
-            {@const post = $creator.replyingTo}
-            {@const user = post.author}
-            <span class="text-xs">
-              Respondendo
-              <InformationCard {user} class="inline">
-                <span class="text-blue-600 dark:text-blue-400"
-                  >@{user.username}
-                </span>
-              </InformationCard>
-            </span>
+          {#if $creator.replyingTo || $creator.quotingTo}
+            {@const post = $creator.replyingTo || $creator.quotingTo}
+            <!-- O post obviamente vai existir, é só pro typescript não encher o saco -->
+            {#if post}
+              {@const user = post.author}
+              <span class="text-xs">
+                Respondendo
+                <InformationCard {user} class="inline">
+                  <span class="text-blue-600 dark:text-blue-400"
+                    >@{user.username}
+                  </span>
+                </InformationCard>
+              </span>
+            {/if}
           {/if}
           <CreatorContent />
           <CreatorFooter />
         </div>
       </div>
+
+      {#if $creator.quotingTo}
+        <PostQuoteContent post={$creator.quotingTo} class="mt-2" />
+      {/if}
     </form>
   </Draggable>
 {/if}
