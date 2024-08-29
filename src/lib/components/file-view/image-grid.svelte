@@ -20,7 +20,7 @@
     <div
       class="relative text-xs overflow-hidden {images.length === 3 && i === 0
         ? 'row-span-2'
-        : ''} object-cover h-full w-full rounded-md border-2 dark:border-zinc-950 border-black">
+        : ''} object-cover h-full w-full rounded-md border-2">
       <img
         src={image instanceof File ? URL.createObjectURL(image) : image.url}
         width={1080}

@@ -162,7 +162,7 @@
   bind:this={draggable}
   on:pointerdown={dragStartHandler}
   data-longpressms={minimumHoldTime}
-  class={twMerge("z-40 bg-white dark:bg-zinc-850", $$restProps.class)}
+  class={twMerge("z-40 bg-background", $$restProps.class)}
   style="transform: {translate}">
   <slot />
 </div>

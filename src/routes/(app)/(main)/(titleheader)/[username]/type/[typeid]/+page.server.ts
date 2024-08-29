@@ -14,8 +14,9 @@ export const load = async ({ params, locals }) => {
   });
 
   return {
+    // biome-ignore lint/style/noNonNullAssertion: <explanation>
     title: `${user?.displayName ?? user?.name} em ${new Time(post!.createdAt).default}`,
-    back: `/typer`,
+    back: '/typer',
     post,
   };
 };

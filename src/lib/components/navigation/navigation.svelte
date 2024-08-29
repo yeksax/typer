@@ -19,12 +19,13 @@
   import type { Writable } from "svelte/store";
   import Draggable from "../draggable.svelte";
   import NavigationItem from "./navigation-item.svelte";
+  import type { ComponentType } from "svelte";
 
   const session = !!$page.data.session;
 
   interface Navigation {
     [key: string]: {
-      icon: any;
+      icon: ComponentType;
       href: string;
       requires: boolean;
       mobile: boolean;
@@ -87,7 +88,7 @@
   const sessionRelated = Object.keys(sessionRelatedNavigationMap) as string[];
 
   const defaultClasses =
-    "flex flex-col items-start gap-6 px-8 bg-white dark:bg-zinc-850 py-4 border-l-4 border-2 border-black dark:border-zinc-950 rounded-lg";
+    "flex flex-col items-start gap-6 px-4 bg-background py-4 border-l-4 border-2 rounded-lg";
   const size = "16";
 
   function unlockCreator() {
@@ -98,7 +99,7 @@
     $page.url.pathname as string,
   );
 
-  $: minified = $page.route.id === "/typos";
+  $: minified = $page.url.pathname === "/typos";
 </script>
 
 <!-- mobile navigation -->
@@ -132,10 +133,12 @@
   </Draggable>
 </div>
 
-<div class="hidden lg:flex {minified ? 'w-max' : 'flex-1'} justify-end">
-  <div
-    class="flex h-screen justify-end py-8 border-black dark:border-zinc-950 fixed">
-    <div class="w-max h-full flex flex-col justify-between text-sm pr-4">
+<div
+  class="hidden lg:flex {minified
+    ? 'w-max basis-24 justify-center'
+    : 'flex-1 '} justify-end">
+  <div class="flex h-screen justify-end py-8 fixed">
+    <div class="w-max h-full flex flex-col justify-between text-sm min-w-[13rem]">
       <div class={defaultClasses}>
         {#each navigation as path}
           {@const nav_item = navigationMap[path]}

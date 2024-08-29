@@ -7,12 +7,12 @@
   import PostBody from "./post-body.svelte";
   import PostStats from "./post-stats.svelte";
 
-  export let hideStats = false;
-  export let dedicated = false;
-  export let minified = false;
-  export let connectDown = false;
-  export let singleColumn = false;
-  export let replyingTo: MinifiedUser | null = null;
+  export const hideStats = false;
+  export const dedicated = false;
+  export const minified = false;
+  export const connectDown = false;
+  export const singleColumn = false;
+  export const replyingTo: MinifiedUser | null = null;
 
   export let post: FullPost;
 </script>

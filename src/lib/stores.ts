@@ -9,8 +9,8 @@ interface PathOption {
 
 export const creator = writable({
   pathOptions: {
-    "/typer": {},
-    "/(titleheader)/[username]/type/[typeid]": {
+    "/(app)/(main)/typer": {},
+    "/(app)/(main)/(titleheader)/[username]/type/[typeid]": {
       floatingOnly: true,
     },
   } as Record<string, PathOption>,

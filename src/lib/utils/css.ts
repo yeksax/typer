@@ -1,5 +1,5 @@
 export function translateTransformer(code: string) {
-  if (code == "percent") return "%";
+  if (code === "percent") return "%";
   return code;
 }
 
@@ -12,7 +12,7 @@ export function resize(node: HTMLElement | Event) {
     target = node;
   }
 
-  const maxHeight = parseInt(target.dataset.maxLines || "1");
+  const maxHeight = Number.parseInt(target.dataset.maxLines || "1");
   
   target.style.maxHeight = `${maxHeight}lh`;
   target.style.height = "0px";

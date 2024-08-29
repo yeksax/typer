@@ -5,13 +5,13 @@
   import InformationCard from "$lib/components/user/information-card.svelte";
   import { creator, newReplies as newQuotes } from "$lib/stores";
   import { longpress } from "$lib/utils/hooks/long-press";
-  import axios, { AxiosError } from "axios";
+  import axios, { type AxiosError } from "axios";
   import { Minimize2Icon, XIcon } from "svelte-feather-icons";
   import CreatorContent from "./creator-content.svelte";
   import CreatorFooter from "./creator-footer.svelte";
   import CreatorHead from "./creator-head.svelte";
-  import PostReplyContent from "./post-reply-content.svelte";
   import PostQuoteContent from "./post-quote-content.svelte";
+  import PostReplyContent from "./post-reply-content.svelte";
 
   $: route = $page.route.id as string;
 
@@ -165,7 +165,7 @@
     creator.update((state) => {
       state = { ...state, inResponseTo: null, replyingTo: null };
 
-      if (state.pathOptions[route]?.hidden != undefined) {
+      if (state.pathOptions[route]?.hidden !== undefined) {
         state.pathOptions[route] = {
           ...state.pathOptions[route],
           hidden: true,

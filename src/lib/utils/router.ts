@@ -8,7 +8,7 @@ class Router {
   }
 
   register(url: string) {
-    if (this.history.at(-1) != url) this.history.push(url);
+    if (this.history.at(-1) !== url) this.history.push(url);
   }
 
   push(url: string) {
@@ -17,6 +17,7 @@ class Router {
   }
 
   pathBack() {
+    // biome-ignore lint/style/noNonNullAssertion: <explanation>
     const pathArray = this.history.at(-1)!.split("/");
     pathArray.pop();
     const path = pathArray.join("/");

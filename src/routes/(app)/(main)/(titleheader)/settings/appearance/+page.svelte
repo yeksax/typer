@@ -1,17 +1,16 @@
 <script lang="ts">
-  import { page } from "$app/stores";
-  import Preference from "$lib/components/settings/preference.svelte";
-  import { MonitorIcon, MoonIcon, SunIcon } from "svelte-feather-icons";
-  import type { PageData } from "./$types";
   import Select from "$lib/components/select/select.svelte";
+  import Preference from "$lib/components/settings/preference.svelte";
   import { theme } from "$lib/stores";
   import type { Preferences } from "@prisma/client";
   import axios from "axios";
+  import { setTheme } from "mode-watcher";
+  import { MonitorIcon, MoonIcon, SunIcon } from "svelte-feather-icons";
 
   const size = "28";
 
   async function handleTheme(new_theme: string) {
-    theme.set(new_theme as Preferences["theme"]);
+    setTheme(new_theme as Preferences["theme"]);
     await axios.post("/api/user/preferences", { theme: new_theme });
   }
 </script>
@@ -41,7 +40,7 @@
         { label: "Claro", value: "LIGHT" },
         { label: "Seguir o sistema", value: "SYSTEM_DEFAULT" },
       ]} />
-      
+
     <p slot="description" class="text-xs opacity-75">
       Ajuste o tema de acordo com seu gosto visual
     </p>
