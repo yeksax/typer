@@ -7,7 +7,7 @@ export async function POST({ params, locals }: RequestEvent) {
   const session = await locals.getSession();
 
   if (!session) {
-    throw error(403, "Not authorized");
+    error(403, "Not authorized");
   }
 
   const { id } = params;
@@ -19,7 +19,7 @@ export async function POST({ params, locals }: RequestEvent) {
   });
 
   if (!user) {
-    throw error(404, "User not found");
+    error(404, "User not found");
   }
 
   const post = await prisma.post.update({

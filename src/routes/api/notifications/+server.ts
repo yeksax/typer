@@ -6,7 +6,7 @@ export async function GET({ locals, request }) {
   const session = await locals.getSession();
 
   if (!session) {
-    throw error(403, "Not authorized");
+    error(403, "Not authorized");
   }
 
   const searchParams = new URL(request.url).searchParams;
@@ -62,7 +62,7 @@ export async function GET({ locals, request }) {
   });
 
   if (!user) {
-    throw error(404, "User not found");
+    error(404, "User not found");
   }
 
   const notifications = user.notifications as _Notification[];

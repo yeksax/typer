@@ -6,7 +6,7 @@ export async function POST({ locals }) {
   const session = await locals.getSession();
 
   if (!session) {
-    throw error(403, "Not authorized");
+    error(403, "Not authorized");
   }
 
   const user = await prisma.user.findUnique({
@@ -16,7 +16,7 @@ export async function POST({ locals }) {
   });
 
   if (!user) {
-    throw error(404, "User not found");
+    error(404, "User not found");
   }
 
   await prisma.notification.updateMany({

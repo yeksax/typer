@@ -17,7 +17,7 @@ export async function POST({ request, locals }) {
   const pusher = locals.pusher;
 
   if (!session) {
-    throw error(403, "Not authorized");
+    error(403, "Not authorized");
   }
 
   const user = await prisma.user.findUnique({
@@ -30,7 +30,7 @@ export async function POST({ request, locals }) {
   });
 
   if (!user) {
-    throw error(404, "User not found");
+    error(404, "User not found");
   }
 
   const searchParams = new URL(request.url).searchParams;
@@ -102,7 +102,7 @@ export async function POST({ request, locals }) {
   const parsed = safeParse(PostSchema, data);
   if (!parsed.success) {
     await pusher.trigger(user.id, "publish-progress", 0);
-    throw error(400, "Invalid data");
+    error(400, "Invalid data");
   }
 
   if (
@@ -110,7 +110,7 @@ export async function POST({ request, locals }) {
     parsed.data.attachments?.length === 0
   ) {
     await pusher.trigger(user.id, "publish-progress", 0);
-    throw error(400, "Você precisa dizer algo eu acho...");
+    error(400, "Você precisa dizer algo eu acho...");
   }
 
   await pusher.trigger(user.id, "publish-progress", 40);

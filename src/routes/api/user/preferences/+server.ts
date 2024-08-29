@@ -7,13 +7,13 @@ export async function POST({ request, locals }: RequestEvent) {
   const session = await locals.getSession();
 
   if (!session) {
-    throw error(403, "Not authorized");
+    error(403, "Not authorized");
   }
 
   const data = (await request.json()) as Record<keyof Preferences, any>;
 
   if (!data) {
-    throw error(400, "Invalid request");
+    error(400, "Invalid request");
   } else {
     await prisma.user.update({
       where: {

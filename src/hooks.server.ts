@@ -42,7 +42,7 @@ async function authorization({ event, resolve }: any) {
   }
 
   if (!session && isRouteProtected) {
-    throw redirect(303, "/signin?next=" + url.pathname);
+    redirect(303, "/signin?next=" + url.pathname);
   }
 
   return resolve(event);
