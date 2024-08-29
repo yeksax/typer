@@ -31,7 +31,7 @@
 
 <div class="flex flex-col gap-2 pb-[100%]">
   {#if $query.isLoading}
-    <span class="text-sm text-zinc-500">Todo: Skeletons</span>
+    <!-- <span class="text-sm text-zinc-500">Todo: Skeletons</span> -->
   {/if}
 
   {#each newPosts as post (post.id)}

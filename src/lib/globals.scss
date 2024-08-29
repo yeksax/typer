@@ -2,20 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  @font-face {
-    font-family: 'Source Code Pro';
-    src: local('Source Code Pro'), local('Source-Code-Pro'), local('source code pro'), local('source-code-pro'),
-      url('/fonts/source-code-pro/SourceCodePro-VariableFont_wght.ttf');
-    font-display: swap;
-  }
-}
-
 * {
-  font-family: Source Code Pro !important;
-  font-weight: 400;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-weight: 500;
 }
 
 html,
@@ -41,8 +29,8 @@ body {
 
 /* Chrome, Edge, and Safari */
 *::-webkit-scrollbar {
-  width: .5rem;
-  height: .5rem;
+  width: 0.5rem;
+  height: 0.5rem;
 }
 
 *::-webkit-scrollbar-track {
@@ -111,5 +99,5 @@ textarea {
 }
 
 pre {
-  @apply whitespace-pre-wrap
+  @apply whitespace-pre-wrap;
 }

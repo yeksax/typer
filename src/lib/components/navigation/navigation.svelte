@@ -87,7 +87,7 @@
   const sessionRelated = Object.keys(sessionRelatedNavigationMap) as string[];
 
   const defaultClasses =
-    "flex flex-col items-start gap-6 px-8 bg-white dark:bg-zinc-850 py-4 border-l-4 border-2 border-black dark:border-zinc-950 rounded-md";
+    "flex flex-col items-start gap-6 px-8 bg-white dark:bg-zinc-850 py-4 border-l-4 border-2 border-black dark:border-zinc-950 rounded-lg";
   const size = "16";
 
   function unlockCreator() {
@@ -95,7 +95,7 @@
   }
 
   $: creatorAllowed = Object.keys($creator.pathOptions).includes(
-    $page.url.pathname as string
+    $page.url.pathname as string,
   );
 
   $: minified = $page.route.id === "/typos";

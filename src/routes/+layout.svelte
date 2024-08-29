@@ -1,4 +1,8 @@
 <script lang="ts">
+  import "@fontsource/geist-mono/400.css";
+  import "@fontsource/geist-mono/500.css";
+  import "@fontsource/geist-mono/600.css";
+  import "@fontsource/geist-mono/700.css";
   import { browser } from "$app/environment";
   import { afterNavigate, beforeNavigate } from "$app/navigation";
   import { page } from "$app/stores";
@@ -18,7 +22,7 @@
   import PostCreator from "$lib/components/posts/creator/creator.svelte";
 
   inject({ mode: dev ? "development" : "production" });
-  let analyticsId = import.meta.env.VERCEL_ANALYTICS_ID;
+  const analyticsId = import.meta.env.VERCEL_ANALYTICS_ID;
 
   $: if (browser && analyticsId) {
     webVitals({
@@ -68,7 +72,7 @@
   });
 
   $: creatorAllowed = Object.keys($creator.pathOptions).includes(
-    $page.route.id as string
+    $page.route.id as string,
   );
 
   function scrollHandler(e: Event) {
@@ -126,3 +130,9 @@
     </div>
   </NotificationsHandler>
 </QueryClientProvider>
+
+<style>
+  :global(*) {
+    font-family: "Geist Mono", monospace !important;
+  }
+</style>

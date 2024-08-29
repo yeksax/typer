@@ -93,9 +93,9 @@
 </script>
 
 <div class="flex flex-col gap-2 pb-[100%]">
-  {#if $query.isLoading}
+  <!-- {#if $query.isLoading}
     <span class="text-sm text-zinc-500">Todo: Skeletons</span>
-  {/if}
+  {/if} -->
 
   {#each queriedNotifications as notification (`${notification.id}_${notification.updatedAt}`)}
     <Notification {notification} />
