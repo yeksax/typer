@@ -51,6 +51,7 @@
 		"@fortawesome/free-solid-svg-icons": "^6.4.2",
 		"@prisma/client": "^5.2.0",
 		"@supabase/supabase-js": "^2.32.0",
+		"@sveltejs/adapter-vercel": "^5.4.3",
 		"@tanstack/svelte-query": "^4.32.6",
 		"@vercel/analytics": "^1.0.2",
 		"axios": "^1.4.0",
