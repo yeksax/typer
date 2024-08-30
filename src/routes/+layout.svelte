@@ -1,5 +1,5 @@
 <script lang="ts">
-  import "@fontsource-variable/inter/opsz.css";
+  import "@fontsource/geist-mono";
   import { browser } from "$app/environment";
   import { afterNavigate } from "$app/navigation";
   import { page } from "$app/stores";
@@ -95,6 +95,6 @@
 
 <style>
   :global(*, pre) {
-    font-family: "Inter Variable", sans-serif;
+    font-family: "Geist Mono", sans-serif;
   }
 </style>
